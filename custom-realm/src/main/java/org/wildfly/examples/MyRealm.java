@@ -19,7 +19,9 @@ package org.wildfly.security.examples;
 import java.security.Principal;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.Arrays;
+import java.util.Map;
 
+import org.wildfly.extension.elytron.Configurable;
 import org.wildfly.security.auth.SupportLevel;
 import org.wildfly.security.auth.server.RealmIdentity;
 import org.wildfly.security.auth.server.RealmUnavailableException;
@@ -34,7 +36,15 @@ import org.wildfly.security.evidence.PasswordGuessEvidence;
  *
  * @author <a href="mailto:jkalina@redhat.com">Jan Kalina</a>
  */
-public class MyRealm implements SecurityRealm {
+public class MyRealm implements SecurityRealm, Configurable {
+
+    private String myAttribute;
+
+    // receiving configuration from subsystem
+    public void initialize(Map<String, String> configuration) {
+        myAttribute = configuration.get("myAttribute");
+        System.out.println("MyRealm initialized with myAttribute = " + myAttribute);
+    }
 
     // this realm does not allow acquiring credentials
     public SupportLevel getCredentialAcquireSupport(Class<? extends Credential> credentialType, String algorithmName,

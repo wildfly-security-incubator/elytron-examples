@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ~ JBoss, Home of Professional Open Source. ~ Copyright 2017 Red Hat, 
+    Inc., and individual contributors ~ as indicated by the @author tags. ~ ~ 
+    Licensed under the Apache License, Version 2.0 (the "License"); ~ you may 
+    not use this file except in compliance with the License. ~ You may obtain 
+    a copy of the License at ~ ~ http://www.apache.org/licenses/LICENSE-2.0 ~ 
+    ~ Unless required by applicable law or agreed to in writing, software ~ distributed 
+    under the License is distributed on an "AS IS" BASIS, ~ WITHOUT WARRANTIES 
+    OR CONDITIONS OF ANY KIND, either express or implied. ~ See the License for 
+    the specific language governing permissions and ~ limitations under the License. -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.wildfly.security.examples</groupId>
+    <artifactId>jetty-standalone</artifactId>
+    <version>1.0.0.Alpha1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>jetty-standalone</name>
+    <url>http://maven.apache.org</url>
+
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <version.org.eclipse.jetty.jetty-server>9.4.11.v20180605</version.org.eclipse.jetty.jetty-server>
+        <version.org.wildfly.security.wildfly-elytron>1.6.0.Final</version.org.wildfly.security.wildfly-elytron>
+        <version.org.wildfly.security.elytron-web.jetty-server>1.0.0.Beta1</version.org.wildfly.security.elytron-web.jetty-server>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.6.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <executable>java</executable>
+                    <arguments>
+                        <argument>-classpath</argument>
+                        <classpath />
+                        <argument>org.wildfly.security.examples.HelloWorld</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.wildfly.security</groupId>
+            <artifactId>wildfly-elytron</artifactId>
+            <version>${version.org.wildfly.security.wildfly-elytron}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wildfly.security.elytron-web</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>${version.org.wildfly.security.elytron-web.jetty-server}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>${version.org.eclipse.jetty.jetty-server}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>${version.org.eclipse.jetty.jetty-server}</version>
+        </dependency>
+    </dependencies>
+</project>

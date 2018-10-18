@@ -71,7 +71,7 @@ public class HelloWorld {
     public static void main(String[] args) throws Exception {
         SecurityDomain securityDomain = createSecurityDomain();
 
-        configureJaspic(securityDomain);
+        configureJaspi();
 
         DeploymentInfo deploymentInfo = Servlets.deployment()
                 .setClassLoader(SecuredServlet.class.getClassLoader())
@@ -108,7 +108,7 @@ public class HelloWorld {
         System.out.println(String.format("e.g. 'curl http://%s:%d%s%s' \n", HOST, PORT, PATH, SERVLET));
     }
 
-    private static String configureJaspic(final SecurityDomain securityDomain) {
+    private static String configureJaspi() {
         AuthConfigFactory authConfigFactory = new ElytronAuthConfigFactory();
         AuthConfigFactory.setFactory(authConfigFactory);
 

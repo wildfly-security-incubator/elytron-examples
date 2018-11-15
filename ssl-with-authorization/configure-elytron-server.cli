@@ -1,0 +1,24 @@
+# Set up two-way SSL using Elytron subsystem commands
+
+# Configure a key-store for the server keystore and server truststore
+/subsystem=elytron/key-store=twoWayKS:add(path=server.keystore,relative-to=jboss.server.config.dir,credential-reference={clear-text=keystorepass},type=JKS)
+/subsystem=elytron/key-store=twoWayTS:add(path=server.truststore,relative-to=jboss.server.config.dir,credential-reference={clear-text=truststorepass},type=JKS)
+
+# Configure a key-manager that references the keystore key-store
+/subsystem=elytron/key-manager=twoWayKM:add(key-store=twoWayKS,algorithm="SunX509",credential-reference={clear-text=keystorepass})
+
+# Configure a trust-manager that references the truststore key-store
+/subsystem=elytron/trust-manager=twoWayTM:add(key-store=twoWayTS,algorithm="SunX509")
+
+# Configure a server-ssl-context that references the key-manager and trust-manager
+# and requires client authentication
+/subsystem=elytron/server-ssl-context=twoWaySSC:add(key-manager=twoWayKM,protocols=["TLSv1.2"],trust-manager=twoWayTM,need-client-auth=true)
+
+# Update the https-listener to the use the ssl-context we just created
+batch
+/subsystem=undertow/server=default-server/https-listener=https:undefine-attribute(name=security-realm)
+/subsystem=undertow/server=default-server/https-listener=https:write-attribute(name=ssl-context,value=twoWaySSC)
+run-batch
+
+# Reload the server instance
+reload

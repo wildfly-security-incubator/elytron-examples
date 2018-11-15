@@ -1,0 +1,29 @@
+# Set up two-way SSL using Elytron subsystem commands
+
+# Configure a key-store for the client keystore and server truststore
+/subsystem=elytron/key-store=twoWayKS:add(path=client1.keystore,relative-to=jboss.server.config.dir,credential-reference={clear-text=keystorepass},type=JKS)
+/subsystem=elytron/key-store=twoWayTS:add(path=client1.truststore,relative-to=jboss.server.config.dir,credential-reference={clear-text=truststorepass},type=JKS)
+
+# Configure a key-manager that references the keystore key-store
+/subsystem=elytron/key-manager=twoWayKM:add(key-store=twoWayKS,algorithm="SunX509",credential-reference={clear-text=keystorepass})
+
+# Configure a trust-manager that references the truststore key-store
+/subsystem=elytron/trust-manager=twoWayTM:add(key-store=twoWayTS,algorithm="SunX509")
+
+# Configure a client-ssl-context that references the key-manager and trust-manager
+/subsystem=elytron/client-ssl-context=twoWaySSC:add(key-manager=twoWayKM,protocols=["TLSv1.2"],trust-manager=twoWayTM)
+
+# Update the https-listener to the use the ssl-context we just created
+batch
+/subsystem=undertow/server=default-server/https-listener=https:undefine-attribute(name=security-realm)
+/subsystem=undertow/server=default-server/https-listener=https:write-attribute(name=ssl-context,value=twoWaySSC)
+run-batch
+
+# reverse-proxy configuration
+/socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=my-socket:add(host=localhost,port=8443)
+/subsystem=undertow/configuration=handler/reverse-proxy=my-proxy:add()
+/subsystem=undertow/configuration=handler/reverse-proxy=my-proxy/host=localhost:add(outbound-socket-binding=my-socket,ssl-context=twoWaySSC,scheme=https)
+/subsystem=undertow/server=default-server/host=default-host/location=\/proxy:add(handler=my-proxy)
+
+# Reload the instance
+reload

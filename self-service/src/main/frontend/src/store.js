@@ -14,25 +14,15 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import ReactDOM from 'react-dom'
-import {Provider} from 'react-redux'
-import 'bootstrap/dist/css/bootstrap.min.css'
+import {createStore} from 'redux'
 
-import App from './components/App'
-import * as serviceWorker from './serviceWorker'
-import {getStore} from './store.js'
-import {loadData} from './utils/request'
+import reducers from './reducers'
 
-function init(){
-    loadData()
+let store
+
+export function getStore() {
+    if (!store) {
+        store = createStore(reducers)
+    }
+    return store
 }
-
-init()
-
-ReactDOM.render(
-    <Provider store={getStore()}>
-        <App/>
-    </Provider>, document.getElementById('root'))
-
-serviceWorker.unregister()

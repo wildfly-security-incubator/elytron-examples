@@ -14,25 +14,6 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import ReactDOM from 'react-dom'
-import {Provider} from 'react-redux'
-import 'bootstrap/dist/css/bootstrap.min.css'
-
-import App from './components/App'
-import * as serviceWorker from './serviceWorker'
-import {getStore} from './store.js'
-import {loadData} from './utils/request'
-
-function init(){
-    loadData()
-}
-
-init()
-
-ReactDOM.render(
-    <Provider store={getStore()}>
-        <App/>
-    </Provider>, document.getElementById('root'))
-
-serviceWorker.unregister()
+export const SET_MESSAGE = "SET_MESSAGE"
+export const REMOVE_MESSAGE = 'REMOVE_MESSAGE'
+export const SET_IDENTITY_DATA = "SET_IDENTITY_DATA"

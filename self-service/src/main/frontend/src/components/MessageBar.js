@@ -15,24 +15,17 @@
  */
 
 import React from 'react'
-import ReactDOM from 'react-dom'
-import {Provider} from 'react-redux'
-import 'bootstrap/dist/css/bootstrap.min.css'
 
-import App from './components/App'
-import * as serviceWorker from './serviceWorker'
-import {getStore} from './store.js'
-import {loadData} from './utils/request'
+import './MessageBar.css'
 
-function init(){
-    loadData()
-}
+const MessageBar = ({message, dismissMessage}) => (
+    <div className="alert alert-warning alert-dismissible fade show info-bar" role="alert" key="warn">
+        {message}
+        <button type="button" className="close" data-dismiss="alert" aria-label="Close"
+            onClick={dismissMessage}>
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+)
 
-init()
-
-ReactDOM.render(
-    <Provider store={getStore()}>
-        <App/>
-    </Provider>, document.getElementById('root'))
-
-serviceWorker.unregister()
+export default MessageBar

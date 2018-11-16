@@ -14,25 +14,12 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import ReactDOM from 'react-dom'
-import {Provider} from 'react-redux'
-import 'bootstrap/dist/css/bootstrap.min.css'
+import {combineReducers} from 'redux'
 
-import App from './components/App'
-import * as serviceWorker from './serviceWorker'
-import {getStore} from './store.js'
-import {loadData} from './utils/request'
+import identityData from './identityData.js'
+import message from './message'
 
-function init(){
-    loadData()
-}
-
-init()
-
-ReactDOM.render(
-    <Provider store={getStore()}>
-        <App/>
-    </Provider>, document.getElementById('root'))
-
-serviceWorker.unregister()
+export default combineReducers({
+    identityData,
+    message,
+})

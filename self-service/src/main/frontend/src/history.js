@@ -14,25 +14,17 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import ReactDOM from 'react-dom'
-import {Provider} from 'react-redux'
-import 'bootstrap/dist/css/bootstrap.min.css'
+import {createHashHistory} from 'history'
 
-import App from './components/App'
-import * as serviceWorker from './serviceWorker'
-import {getStore} from './store.js'
-import {loadData} from './utils/request'
+let history
 
-function init(){
-    loadData()
+export function getHistory() {
+    if (!history) {
+        history = createHashHistory()
+    }
+    return history
 }
 
-init()
-
-ReactDOM.render(
-    <Provider store={getStore()}>
-        <App/>
-    </Provider>, document.getElementById('root'))
-
-serviceWorker.unregister()
+export function nextPath(path) {
+    getHistory().push(path)
+}

@@ -14,25 +14,15 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import ReactDOM from 'react-dom'
-import {Provider} from 'react-redux'
-import 'bootstrap/dist/css/bootstrap.min.css'
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
 
-import App from './components/App'
-import * as serviceWorker from './serviceWorker'
-import {getStore} from './store.js'
-import {loadData} from './utils/request'
-
-function init(){
-    loadData()
+/**
+ * JAXActivator is an arbitrary name, what is important is that javax.ws.rs.core.Application is extended
+ * and the @ApplicationPath annotation is used with a "rest" path.  Without this the rest routes linked to
+ * from index.html would not be found.
+ */
+@ApplicationPath("rest")
+public class JAXActivator extends Application {
+    // Left empty intentionally
 }
-
-init()
-
-ReactDOM.render(
-    <Provider store={getStore()}>
-        <App/>
-    </Provider>, document.getElementById('root'))
-
-serviceWorker.unregister()

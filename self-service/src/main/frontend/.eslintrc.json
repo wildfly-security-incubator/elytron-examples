@@ -1,0 +1,63 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "react-app"
+  ],
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true,
+      "jsx": true
+    },
+    "sourceType": "module"
+  },
+  "plugins": [
+    "react"
+  ],
+  "rules": {
+    "no-multiple-empty-lines": [
+      "warn",
+      {
+        "max": 1,
+        "maxEOF": 1
+      }
+    ],
+    "lines-between-class-members": [
+      "warn",
+      "always",
+      {
+        "exceptAfterSingleLine": true
+      }
+    ],
+    "react/jsx-indent": [
+      "warn",
+      4
+    ],
+    "no-console": "off",
+    "semi": [
+      "warn",
+      "never"
+    ],
+    "no-unused-vars": "warn",
+    "import/order": [
+      "warn",
+      {
+        "groups": [
+          "builtin",
+          "external",
+          "parent",
+          "sibling",
+          "index"
+        ],
+        "newlines-between": "always"
+      }
+    ],
+    "indent": [
+      "warn",
+      4
+    ],
+    "brace-style": "warn",
+    "array-bracket-newline": "warn",
+    "array-bracket-spacing": "warn"
+  }
+}

@@ -1,0 +1,12 @@
+.to-the-right {
+    float: right
+}
+
+.hover {
+    cursor: pointer
+}
+
+ul {
+    list-style-position: inside;
+    padding-left: 0
+}

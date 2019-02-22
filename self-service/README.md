@@ -34,7 +34,7 @@ mvn clean install wildfly:deploy
 ```
 ### Then to run webpack and develop front end:
 ```
-cd /src/main/frontend
+cd src/main/frontend
 yarn install
 yarn start 
 ```

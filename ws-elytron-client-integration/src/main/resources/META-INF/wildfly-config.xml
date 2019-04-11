@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <authentication-client xmlns="urn:elytron:1.0">
+        <authentication-rules>
+            <rule use-configuration="auth-config"/>
+        </authentication-rules>
+        <authentication-configurations>
+            <configuration name="auth-config">
+                <set-user-name name="bob"/>
+                <credentials>
+                    <clear-password password="bobs_password"/>
+                </credentials>
+            </configuration>
+        </authentication-configurations>
+        <key-stores>
+            <key-store name="truststore" type="JKS">
+                <file name="/path/to/client.truststore.jks"/>
+                <key-store-clear-password password="secret"/>
+            </key-store>
+            <key-store name="keystore" type="JKS">
+                <file name="/path/to/client.keystore.jks"/>
+                <key-store-clear-password password="secret"/>
+            </key-store>
+        </key-stores>
+        <ssl-contexts>
+            <ssl-context name="client-context">
+                <trust-store key-store-name="truststore"/>
+                <key-store-ssl-certificate key-store-name="keystore" alias="client">
+                    <key-store-clear-password password="secret"/>
+                </key-store-ssl-certificate>
+            </ssl-context>
+        </ssl-contexts>
+        <ssl-context-rules>
+            <rule use-ssl-context="client-context"/>
+        </ssl-context-rules>
+    </authentication-client>
+</configuration>

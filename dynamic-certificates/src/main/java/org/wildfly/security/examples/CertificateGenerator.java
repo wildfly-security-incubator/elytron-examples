@@ -434,8 +434,15 @@ public class CertificateGenerator {
      * @throws Exception Errors encountered during generation, described in their corresponding methods
      */
     public void generateTwoWaySSL() throws Exception {
+        ArrayList<String> distinguishedNamesList = new ArrayList<>();
+        distinguishedNamesList.add("CN=client1");
+        distinguishedNamesList.add("CN=client2");
+        generateTwoWaySSL(distinguishedNamesList);
+    }
+
+    public void generateTwoWaySSL(ArrayList<String> distinguishedNames) throws Exception {
         addAlias("client1");
-        addDistinguishedName("CN=client1");
+        addDistinguishedName(distinguishedNames.get(0));
         setTrustStoreName("server.truststore");
         setKeyStoreName("client1.keystore");
         SelfSignedX509CertificateAndSigningKey authority = createAuthority();
@@ -448,7 +455,7 @@ public class CertificateGenerator {
         clearAliases();
         clearDistinguishedNames();
         addAlias("client2");
-        addDistinguishedName("CN=client2");
+        addDistinguishedName(distinguishedNames.get(1));
         certificates = createSignedCertificates(authority);
         createKeyStoreAndTrustStore(authority, certificates);
         saveKeyStoreToFile();

@@ -37,11 +37,6 @@
                 <version>1.6.0</version>
                 <configuration>
                     <executable>java</executable>
-                    <arguments>
-                        <argument>-classpath</argument>
-                        <classpath />
-                        <argument>org.wildfly.security.examples.CertificateGenerationExample</argument>
-                    </arguments>
                 </configuration>
                 <executions>
                     <execution>

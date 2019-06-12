@@ -31,14 +31,25 @@ public class CertificateGenerationExample {
     private static String outputLocation = CertificateGenerationExample.class.getProtectionDomain().getCodeSource().getLocation().getPath() + "dynamic-certificates/custom/";
 
     public static void main(String[] args) throws Exception {
-        generateKeyStoresForTwoWaySSL();
+        ArrayList<String> distinguishedNamesList = new ArrayList<>();
+        if(args.length == 0) {
+            distinguishedNamesList.add("CN=client1");
+            distinguishedNamesList.add("CN=client2");
+        } else {
+            for (int i = 0; i < 2; i++) {
+                distinguishedNamesList.add(args[i]);
+            }
+        }
+        generateKeyStoresForTwoWaySSL(distinguishedNamesList);
     }
 
-    public static void generateKeyStoresForTwoWaySSL() throws Exception {
+    public static void generateKeyStoresForTwoWaySSL(ArrayList<String> distinguishedNamesList) throws Exception {
         new CertificateGenerator.Builder()
                 .setOutputLocation(new File(CertificateGenerationExample.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getParentFile().toString())
                 .build()
-                .generateTwoWaySSL();
+                .generateTwoWaySSL(distinguishedNamesList);
+
+
     }
 
     public void generateKeyStoresWithDefaults() throws Exception {

@@ -1,0 +1,29 @@
+# Obtain CN value from X.509 certificate subject name
+/subsystem=elytron/x500-attribute-principal-decoder=cnDecoder:add(attribute-name=CN, maximum-segments=1)
+
+# Match the ID portion from the CN value
+/subsystem=elytron/regex-principal-transformer=myRegexTransformer:add(pattern=".*\\.([0-9]+)",replacement="$1")
+
+# Combine the above two transformers
+/subsystem=elytron/chained-principal-transformer=myChainedTransformer:add(principal-transformers=[cnDecoder, myRegexTransformer])
+
+# Create a security realm with two identities, 123456 and 456789
+/subsystem=elytron/filesystem-realm=idsRealm:add(path=ids,relative-to=jboss.server.config.dir)
+/subsystem=elytron/filesystem-realm=idsRealm:add-identity(identity=123456)
+/subsystem=elytron/filesystem-realm=idsRealm:add-identity-attribute(identity=123456,name=Roles,value=[Users])
+/subsystem=elytron/filesystem-realm=idsRealm:add-identity(identity=456789)
+
+# Configure a security domain that references our security realm
+/subsystem=elytron/security-domain=clientCertDomain:add(realms=[{realm=idsRealm}], default-realm=idsRealm, pre-realm-principal-transformer=myChainedTransformer, permission-mapper=default-permission-mapper)
+
+# Configure two-way SSL
+/subsystem=elytron/key-store=serverTS:add(path=server.truststore,relative-to=jboss.server.config.dir,credential-reference={clear-text=truststorepass},type=JKS)
+security enable-ssl-http-server --key-store-path=server.keystore --key-store-path-relative-to=jboss.server.config.dir --key-store-password=keystorepass --trust-store-name=serverTS
+
+# Configure the CLIENT_CERT HTTP mechanism
+/subsystem=elytron/configurable-http-server-mechanism-factory=configuredCert:add(http-server-mechanism-factory=global, properties={org.wildfly.security.http.skip-certificate-verification=true})
+/subsystem=elytron/http-authentication-factory=clientCertAuth:add(http-server-mechanism-factory=configuredCert, security-domain=clientCertDomain, mechanism-configurations=[{mechanism-name=CLIENT_CERT}])
+/subsystem=undertow/application-security-domain=other:add(http-authentication-factory=clientCertAuth,override-deployment-config=true)
+
+# Reload the server instance
+reload

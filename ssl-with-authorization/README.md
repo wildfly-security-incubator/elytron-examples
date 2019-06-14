@@ -23,7 +23,7 @@ a server and two clients:
 
 ```
    cd dynamic-certificates
-   mvn clean install exec:exec
+   mvn clean install exec:java -Dexec.mainClass="org.wildfly.security.examples.CertificateGenerationExample"
 ```
 
 The above command generates the following keystores and truststores in the ```dynamic-certificates/target``` directory:

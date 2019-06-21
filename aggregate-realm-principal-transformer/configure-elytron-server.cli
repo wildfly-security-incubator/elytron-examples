@@ -1,0 +1,25 @@
+# Create an authentication security realm
+/subsystem=elytron/filesystem-realm=authenticationRealm:add(path=authenticationFS,relative-to=jboss.server.config.dir,encoded=false)
+/subsystem=elytron/filesystem-realm=authenticationRealm:add-identity(identity="guest")
+/subsystem=elytron/filesystem-realm=authenticationRealm:set-password(identity="guest", clear={password="guestPwd1!"})
+
+#Create an authorization security realm
+/subsystem=elytron/filesystem-realm=authorizationRealm:add(path=authorizationFS,relative-to=jboss.server.config.dir,encoded=false)
+/subsystem=elytron/filesystem-realm=authorizationRealm:add-identity(identity="guest-attributes")
+/subsystem=elytron/filesystem-realm=authorizationRealm:add-identity-attribute(identity="guest-attributes",name=Roles,value=[Users])
+
+#Configure a constant principal transformer
+/subsystem=elytron/constant-principal-transformer=constantTransformer:add(constant="guest-attributes")
+
+#Configure an aggregate realm 
+/subsystem=elytron/aggregate-realm=aggregateRealm:add(authentication-realm=authenticationRealm,authorization-realm=authorizationRealm,principal-transformer=constantTransformer)
+
+# Configure a security domain that references our security realm
+/subsystem=elytron/security-domain=simpleDomain:add(realms=[{realm=aggregateRealm}], default-realm=aggregateRealm, permission-mapper=default-permission-mapper)
+
+/subsystem=elytron/http-authentication-factory=http-auth:add(http-server-mechanism-factory=global,security-domain=simpleDomain,mechanism-configurations=[{mechanism-name=BASIC,mechanism-realm-configurations=[{realm-name=other}]}])
+
+/subsystem=undertow/application-security-domain=other:add(http-authentication-factory=http-auth)
+
+# Reload the server instance
+reload

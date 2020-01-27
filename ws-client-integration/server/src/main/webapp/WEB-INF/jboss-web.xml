@@ -1,0 +1,3 @@
+<jboss-web>
+    <security-domain>exampleFsSD</security-domain>
+</jboss-web>

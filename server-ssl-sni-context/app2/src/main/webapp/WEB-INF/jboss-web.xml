@@ -1,0 +1,4 @@
+<jboss-web> 
+     <context-root>/app2</context-root> 
+     <virtual-host>app2</virtual-host> 
+</jboss-web>

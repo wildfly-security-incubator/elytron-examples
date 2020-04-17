@@ -1,0 +1,4 @@
+# Configure two virtual hosts: app1.com and app2.com
+/subsystem=undertow/server=default-server/host=app1:add(alias=["app1.com"],default-web-module=app1.war)
+/subsystem=undertow/server=default-server/host=app2:add(alias=["app2.com"],default-web-module=app2.war)
+

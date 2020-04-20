@@ -1,0 +1,39 @@
+# Create a security realm with two identities, 123456 and alice.smith@example.com
+/subsystem=elytron/filesystem-realm=idsRealm:add(path=ids,relative-to=jboss.server.config.dir)
+/subsystem=elytron/filesystem-realm=idsRealm:add-identity(identity=123456)
+/subsystem=elytron/filesystem-realm=idsRealm:add-identity(identity=alice.smith@example.com)
+/subsystem=elytron/filesystem-realm=idsRealm:add-identity-attribute(identity=alice.smith@example.com,name=Roles,value=[Users])
+
+# Configure an evidence decoder that will extract the principal from the client's certificate using the RFC822Name
+/subsystem=elytron/x509-subject-alt-name-evidence-decoder=emailDecoder:add(alt-name-type=rfc822Name)
+
+# Configure an evidence decoder that will extract the principal from the client's certificate using the subject name
+/subsystem=elytron/x500-subject-evidence-decoder=subjectDecoder:add()
+
+# Configure an aggregate evidence decoder. Each evidence decoder will be attempted in order until
+# one returns a non-null principal or until there are no more evidence decoders left to try
+/subsystem=elytron/aggregate-evidence-decoder=myAggregateDecoder:add(evidence-decoders=[emailDecoder,subjectDecoder])
+
+# Obtain CN value from X.509 certificate subject name
+/subsystem=elytron/x500-attribute-principal-decoder=cnDecoder:add(attribute-name=CN, maximum-segments=1)
+
+# Match the ID portion from the CN value
+/subsystem=elytron/regex-principal-transformer=idTransformer:add(pattern=".*\\.([0-9]+)",replacement="$1")
+
+# Combine the above two transformers
+/subsystem=elytron/chained-principal-transformer=myChainedTransformer:add(principal-transformers=[cnDecoder, idTransformer])
+
+# Configure a security domain that references our security realm, evidence decoder, and principal transformer
+/subsystem=elytron/security-domain=clientCertDomain:add(realms=[{realm=idsRealm}], default-realm=idsRealm, permission-mapper=default-permission-mapper, evidence-decoder=myAggregateDecoder, pre-realm-principal-transformer=myChainedTransformer)
+
+# Configure two-way SSL
+/subsystem=elytron/key-store=serverTS:add(path=server.truststore,relative-to=jboss.server.config.dir,credential-reference={clear-text=truststorepass},type=JKS)
+security enable-ssl-http-server --key-store-path=server.keystore --key-store-path-relative-to=jboss.server.config.dir --key-store-password=keystorepass --trust-store-name=serverTS
+
+# Configure the CLIENT_CERT HTTP mechanism
+/subsystem=elytron/configurable-http-server-mechanism-factory=configuredCert:add(http-server-mechanism-factory=global, properties={org.wildfly.security.http.skip-certificate-verification=true})
+/subsystem=elytron/http-authentication-factory=clientCertAuth:add(http-server-mechanism-factory=configuredCert, security-domain=clientCertDomain, mechanism-configurations=[{mechanism-name=CLIENT_CERT}])
+/subsystem=undertow/application-security-domain=other:add(http-authentication-factory=clientCertAuth,override-deployment-config=true)
+
+# Reload the server instance
+reload

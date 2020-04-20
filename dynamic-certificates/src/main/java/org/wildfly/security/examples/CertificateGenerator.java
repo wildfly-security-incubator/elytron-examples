@@ -30,12 +30,15 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.security.auth.x500.X500Principal;
 
+import org.wildfly.security.x500.GeneralName;
 import org.wildfly.security.x500.cert.SelfSignedX509CertificateAndSigningKey;
+import org.wildfly.security.x500.cert.SubjectAlternativeNamesExtension;
 import org.wildfly.security.x500.cert.X509CertificateBuilder;
 
 /**
@@ -43,6 +46,13 @@ import org.wildfly.security.x500.cert.X509CertificateBuilder;
  * @author <a href="mailto:jucook@redhat.com">Justin Cook</a>
  */
 public class CertificateGenerator {
+
+    private static final String RFC_822_NAME = "rfc822Name";
+    private static final String DNS_NAME = "dNSName";
+    private static final String DIRECTORY_NAME = "directoryName";
+    private static final String URI_NAME = "uniformResourceIdentifier";
+    private static final String IP_ADDRESS = "iPAddress";
+    private static final String REGISTERED_ID = "registeredID";
 
     public final String ALGORITHMS_RSA = "RSA";
     public final String ALGORITHMS_SHA_1_RSA = "SHA1withRSA";
@@ -64,6 +74,7 @@ public class CertificateGenerator {
     private int keySize = KEY_SIZES_2048;
     private ArrayList<String> aliases;
     private ArrayList<String> distinguishedNames;
+    private ArrayList<String> subjectAltNames;
     private ArrayList<char[]> keyPasswords;
     private ArrayList<String> serialNumbers;
     private KeyStore keyStore;
@@ -78,6 +89,7 @@ public class CertificateGenerator {
     public static class Builder {
         private ArrayList<String> aliases = new ArrayList<>();
         private ArrayList<String> distinguishedNames = new ArrayList<>();
+        private ArrayList<String> subjectAltNames = new ArrayList<>();
         private ArrayList<char[]> keyPasswords = new ArrayList<>();
         private ArrayList<String> serialNumbers = new ArrayList<>();
         private String outputLocation = new File(CertificateGenerationExample.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getParentFile().toString();
@@ -212,6 +224,7 @@ public class CertificateGenerator {
     private CertificateGenerator(Builder builder) {
         this.aliases = builder.aliases;
         this.distinguishedNames = builder.distinguishedNames;
+        this.subjectAltNames = builder.subjectAltNames;
         this.keyPasswords = builder.keyPasswords;
         this.outputLocation = builder.outputLocation;
     }
@@ -317,6 +330,15 @@ public class CertificateGenerator {
     }
 
     /**
+     * Sets a single new subject alt name.
+     *
+     * @param subjectAltName the new subject alt name
+     */
+    public void addSubjectAltName(String subjectAltName) {
+        this.subjectAltNames.add(subjectAltName);
+    }
+
+    /**
      * Sets a single new key password
      *
      * @param keyPassword The new password
@@ -346,6 +368,13 @@ public class CertificateGenerator {
      */
     public void clearDistinguishedNames() {
         this.distinguishedNames.clear();
+    }
+
+    /**
+     * Wipes the current subject alt name.
+     */
+    public void clearSubjectAltNames() {
+        this.subjectAltNames.clear();
     }
 
     /**
@@ -435,14 +464,23 @@ public class CertificateGenerator {
      */
     public void generateTwoWaySSL() throws Exception {
         ArrayList<String> distinguishedNamesList = new ArrayList<>();
+        ArrayList<String> subjectAltNamesList = new ArrayList<>();
         distinguishedNamesList.add("CN=client1");
         distinguishedNamesList.add("CN=client2");
-        generateTwoWaySSL(distinguishedNamesList);
+        generateTwoWaySSL(distinguishedNamesList, subjectAltNamesList);
     }
 
     public void generateTwoWaySSL(ArrayList<String> distinguishedNames) throws Exception {
+        generateTwoWaySSL(distinguishedNames, null);
+    }
+
+    public void generateTwoWaySSL(ArrayList<String> distinguishedNames, ArrayList<String> subjectAltNames) throws Exception {
+        boolean subjectAltNamesSpecified = subjectAltNames != null && ! subjectAltNames.isEmpty();
         addAlias("client1");
         addDistinguishedName(distinguishedNames.get(0));
+        if (subjectAltNamesSpecified) {
+            addSubjectAltName(subjectAltNames.get(0));
+        }
         setTrustStoreName("server.truststore");
         setKeyStoreName("client1.keystore");
         SelfSignedX509CertificateAndSigningKey authority = createAuthority();
@@ -454,8 +492,12 @@ public class CertificateGenerator {
         setKeyStoreName("client2.keystore");
         clearAliases();
         clearDistinguishedNames();
+        clearSubjectAltNames();
         addAlias("client2");
         addDistinguishedName(distinguishedNames.get(1));
+        if (subjectAltNamesSpecified) {
+            addSubjectAltName(subjectAltNames.get(1));
+        }
         certificates = createSignedCertificates(authority);
         createKeyStoreAndTrustStore(authority, certificates);
         saveKeyStoreToFile();
@@ -463,6 +505,9 @@ public class CertificateGenerator {
         setKeyStoreName("server.keystore");
         clearAliases();
         clearDistinguishedNames();
+        if (subjectAltNamesSpecified) {
+            clearSubjectAltNames();
+        }
         addAlias("server");
         addDistinguishedName("CN=server");
         certificates = createSignedCertificates(authority);
@@ -500,8 +545,14 @@ public class CertificateGenerator {
     public List<X509Certificate> createSignedCertificates(SelfSignedX509CertificateAndSigningKey authority) throws Exception {
         List<X509Certificate> certificates = new ArrayList<>();
         keyPairs.clear();
+        boolean subjectAltNamesSpecified = subjectAltNames != null && ! subjectAltNames.isEmpty();
+        int i = 0;
         for (String distinguishedName : distinguishedNames) {
-            certificates.add(createCertificate(authority, generateKeyPairAndReturnPublicKey(), distinguishedName));
+            String subjectAltName = subjectAltNamesSpecified ? subjectAltNames.get(i) : null;
+            certificates.add(createCertificate(authority, generateKeyPairAndReturnPublicKey(), distinguishedName, subjectAltName));
+            if (subjectAltNamesSpecified) {
+                i++;
+            }
         }
         return certificates;
     }
@@ -643,14 +694,11 @@ public class CertificateGenerator {
      * @throws CertificateException Errors encountered generating the X509Certificate
      */
     private X509Certificate createCertificate(SelfSignedX509CertificateAndSigningKey issuerSelfSignedX509CertificateAndSigningKey, PublicKey publicKey, String subjectDN) throws CertificateException {
-        return new X509CertificateBuilder()
-                .setIssuerDn(issuerSelfSignedX509CertificateAndSigningKey.getSelfSignedCertificate().getIssuerX500Principal())
-                .setSubjectDn(new X500Principal(subjectDN))
-                .setSignatureAlgorithmName(sigAlg)
-                .setSigningKey(issuerSelfSignedX509CertificateAndSigningKey.getSigningKey())
-                .setPublicKey(publicKey)
-                .setSerialNumber(new BigInteger(Integer.toString((int) (Math.random() * 10000 + 1))))
-                .build();
+        return createCertificate(issuerSelfSignedX509CertificateAndSigningKey, publicKey, subjectDN, null, null);
+    }
+
+    private X509Certificate createCertificate(SelfSignedX509CertificateAndSigningKey issuerSelfSignedX509CertificateAndSigningKey, PublicKey publicKey, String subjectDN, String subjectAltName) throws CertificateException {
+        return createCertificate(issuerSelfSignedX509CertificateAndSigningKey, publicKey, subjectDN, null, subjectAltName);
     }
 
     /**
@@ -663,15 +711,50 @@ public class CertificateGenerator {
      * @return The X509Certificate that is generated
      * @throws CertificateException Errors encountered generating the X509Certificate
      */
-    private X509Certificate createCertificate(SelfSignedX509CertificateAndSigningKey issuerSelfSignedX509CertificateAndSigningKey, PublicKey publicKey, String subjectDN, String serialNumber) throws CertificateException {
-        return new X509CertificateBuilder()
-                .setIssuerDn(issuerSelfSignedX509CertificateAndSigningKey.getSelfSignedCertificate().getIssuerX500Principal())
+    private X509Certificate createCertificate(SelfSignedX509CertificateAndSigningKey issuerSelfSignedX509CertificateAndSigningKey, PublicKey publicKey, String subjectDN, String serialNumber, String subjectAltName) throws CertificateException {
+        boolean subjectAltNameSpecified = subjectAltName != null;
+        GeneralName generalName = null;
+        BigInteger serialNumberValue;
+        if (serialNumber == null) {
+            serialNumberValue = new BigInteger(Integer.toString((int) (Math.random() * 10000 + 1)));
+        } else {
+            serialNumberValue = new BigInteger(serialNumber);
+        }
+
+        if (subjectAltNameSpecified) {
+            String[] subjectAltNameKeyAndValue = subjectAltName.split("=");
+            switch (subjectAltNameKeyAndValue[0]) {
+                case RFC_822_NAME:
+                    generalName = new GeneralName.RFC822Name(subjectAltNameKeyAndValue[1]);
+                    break;
+                case DNS_NAME:
+                    generalName = new GeneralName.DNSName(subjectAltNameKeyAndValue[1]);
+                    break;
+                case DIRECTORY_NAME:
+                    generalName = new GeneralName.DirectoryName(subjectAltNameKeyAndValue[1]);
+                    break;
+                case URI_NAME:
+                    generalName = new GeneralName.URIName(subjectAltNameKeyAndValue[1]);
+                    break;
+                case IP_ADDRESS:
+                    generalName = new GeneralName.IPAddress(subjectAltNameKeyAndValue[1]);
+                    break;
+                case REGISTERED_ID:
+                    generalName = new GeneralName.RegisteredID(subjectAltNameKeyAndValue[1]);
+                    break;
+            }
+        }
+        X509CertificateBuilder builder = new X509CertificateBuilder();
+        builder.setIssuerDn(issuerSelfSignedX509CertificateAndSigningKey.getSelfSignedCertificate().getIssuerX500Principal())
                 .setSubjectDn(new X500Principal(subjectDN))
                 .setSignatureAlgorithmName(sigAlg)
                 .setSigningKey(issuerSelfSignedX509CertificateAndSigningKey.getSigningKey())
                 .setPublicKey(publicKey)
-                .setSerialNumber(new BigInteger(serialNumber))
-                .build();
+                .setSerialNumber(serialNumberValue);
+        if (generalName != null) {
+            builder.addExtension(new SubjectAlternativeNamesExtension(true, Arrays.asList(generalName)));
+        }
+        return builder.build();
     }
 
     /**

@@ -32,6 +32,7 @@ public class CertificateGenerationExample {
 
     public static void main(String[] args) throws Exception {
         ArrayList<String> distinguishedNamesList = new ArrayList<>();
+        ArrayList<String> subjectAltNamesList = new ArrayList<>();
         if(args.length == 0) {
             distinguishedNamesList.add("CN=client1");
             distinguishedNamesList.add("CN=client2");
@@ -39,15 +40,26 @@ public class CertificateGenerationExample {
             for (int i = 0; i < 2; i++) {
                 distinguishedNamesList.add(args[i]);
             }
+            if (args.length == 4) {
+                for (int i = 2; i < 4; i++) {
+                    subjectAltNamesList.add(args[i]);
+                }
+            }
         }
-        generateKeyStoresForTwoWaySSL(distinguishedNamesList);
+        generateKeyStoresForTwoWaySSL(distinguishedNamesList, subjectAltNamesList);
     }
 
     public static void generateKeyStoresForTwoWaySSL(ArrayList<String> distinguishedNamesList) throws Exception {
+        generateKeyStoresForTwoWaySSL(distinguishedNamesList, null);
+
+
+    }
+
+    public static void generateKeyStoresForTwoWaySSL(ArrayList<String> distinguishedNamesList, ArrayList<String> subjectAltNamesList) throws Exception {
         new CertificateGenerator.Builder()
                 .setOutputLocation(new File(CertificateGenerationExample.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getParentFile().toString())
                 .build()
-                .generateTwoWaySSL(distinguishedNamesList);
+                .generateTwoWaySSL(distinguishedNamesList, subjectAltNamesList);
 
 
     }

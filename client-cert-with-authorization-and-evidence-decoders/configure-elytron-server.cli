@@ -31,6 +31,12 @@
 security enable-ssl-http-server --key-store-path=server.keystore --key-store-path-relative-to=jboss.server.config.dir --key-store-password=keystorepass --trust-store-name=serverTS
 
 # Configure the CLIENT_CERT HTTP mechanism
+# The CLIENT_CERT HTTP authentication mechanism makes use of the verified X.509 client certificate chain that is established on the SSL connection.
+# By default, this authentication mechanism will attempt to use the configured security realm to validate this certificate chain using client certificates
+# that are stored in the configured security realm. Since our security realm does not contain client certificates and only contains role information, there
+# won’t be a way for the realm itself to verify the client certificate. This is fine since we know the certificate chain was already verified when establishing
+# the SSL connection so we’re going to set the org.wildfly.security.http.skip-certificate-verification property to true for the CLIENT_CERT mechanism, as shown below.
+# Our security realm will still be used for the authorization check.
 /subsystem=elytron/configurable-http-server-mechanism-factory=configuredCert:add(http-server-mechanism-factory=global, properties={org.wildfly.security.http.skip-certificate-verification=true})
 /subsystem=elytron/http-authentication-factory=clientCertAuth:add(http-server-mechanism-factory=configuredCert, security-domain=clientCertDomain, mechanism-configurations=[{mechanism-name=CLIENT_CERT}])
 /subsystem=undertow/application-security-domain=other:add(http-authentication-factory=clientCertAuth,override-deployment-config=true)

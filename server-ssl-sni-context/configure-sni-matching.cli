@@ -1,0 +1,30 @@
+# Configure a key-store for our server certificates
+/subsystem=elytron/key-store=serverKS:add(path=server.keystore,relative-to=jboss.server.config.dir,type=JKS,credential-reference={clear-text=secret})
+
+# Generate self-signed certificates for app1.com, app2.com, and localhost
+/subsystem=elytron/key-store=serverKS:generate-key-pair(alias=app1,distinguished-name="CN=app1.com",algorithm=RSA)
+/subsystem=elytron/key-store=serverKS:generate-key-pair(alias=app2,distinguished-name="CN=app2.com",algorithm=RSA)
+/subsystem=elytron/key-store=serverKS:generate-key-pair(alias=localhost,distinguished-name="CN=localhost",algorithm=RSA)
+/subsystem=elytron/key-store=serverKS:store()
+
+# Configure key-managers that will be used to select the alias to use from our key-store
+/subsystem=elytron/key-manager=app1KM:add(key-store=serverKS,credential-reference={clear-text=secret},alias-filter=app1)
+/subsystem=elytron/key-manager=app2KM:add(key-store=serverKS,credential-reference={clear-text=secret},alias-filter=app2)
+/subsystem=elytron/key-manager=localhostKM:add(key-store=serverKS,credential-reference={clear-text=secret},alias-filter=localhost)
+
+# Configure ssl-contexts that reference each of the key-managers we have just created
+/subsystem=elytron/server-ssl-context=app1SSC:add(key-manager=app1KM)
+/subsystem=elytron/server-ssl-context=app2SSC:add(key-manager=app2KM)
+/subsystem=elytron/server-ssl-context=localhostSSC:add(key-manager=localhostKM)
+
+# Configure a server-ssl-sni-context that will ensure the correct certificate
+# is presented to the client based on the SNI extension provided by the client
+/subsystem=elytron/server-ssl-sni-context=sniSSC:add(default-ssl-context=localhostSSC,host-context-map={app1\\.com=app1SSC,app2\\.com=app2SSC})
+
+# Update https-listener configuration to reference our server-ssl-sni-context
+batch
+/subsystem=undertow/server=default-server/https-listener=https:undefine-attribute(name=security-realm)
+/subsystem=undertow/server=default-server/https-listener=https:write-attribute(name=ssl-context,value=sniSSC)
+run-batch
+reload
+

@@ -1,0 +1,31 @@
+# Create an Elytron filesystem based security realm
+/subsystem=elytron/filesystem-realm=exampleRealm:add(path=fs-realm-users,relative-to=jboss.server.config.dir)
+
+# Add user alice  
+/subsystem=elytron/filesystem-realm=exampleRealm:add-identity(identity=alice)  
+/subsystem=elytron/filesystem-realm=exampleRealm:set-password(identity=alice,clear={password=alice123+})
+/subsystem=elytron/filesystem-realm=exampleRealm:add-identity-attribute(identity=alice,name=Roles,value=[employee])
+
+# Add exampleRealm to the ApplicationDomain’s security realms
+/subsystem=elytron/security-domain=ApplicationDomain:list-add(name=realms, value={realm=exampleRealm})  
+/subsystem=elytron/security-domain=ApplicationDomain:write-attribute(name=default-realm, value=exampleRealm)
+
+# Add a source address role decoder to map an IP address to a role
+/subsystem=elytron/source-address-role-decoder=ipRoleDecoder1:add(source-address="127.0.0.2", roles=[admin])
+
+# (Optional) Add a simple permission mapper that only assigns the "LoginPermission" if the identity has the "admin" role
+#/subsystem=elytron/simple-permission-mapper=ipPermissionMapper:add(permission-mappings=[{roles=["admin"], permission-sets=[{permission-set=login-permission}]}])
+
+# Update our security-domain to reference our role decoder (and optionally, our permission mapper)
+/subsystem=elytron/security-domain=ApplicationDomain:write-attribute(name=role-decoder,value=ipRoleDecoder1)
+#/subsystem=elytron/security-domain=ApplicationDomain:write-attribute(name=permission-mapper,value=ipPermissionMapper)
+
+# Add a security domain mapping in the EJB3 subsystem to secure our EJBs using Elytron
+/subsystem=ejb3/application-security-domain=other:add(security-domain=ApplicationDomain)
+
+# Update the http-remoting-connector to reference the SASL authentication
+# factory that is backed by our Elytron security domain
+/subsystem=remoting/http-connector=http-remoting-connector:write-attribute(name=sasl-authentication-factory, value=application-sasl-authentication)
+/subsystem=remoting/http-connector=http-remoting-connector:undefine-attribute(name=security-realm)
+
+reload

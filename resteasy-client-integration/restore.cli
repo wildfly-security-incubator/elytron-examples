@@ -1,0 +1,13 @@
+/subsystem=undertow/application-security-domain=exampleFsSD:remove()
+
+/subsystem=elytron/simple-role-decoder=from-roles-attribute:remove()
+
+/subsystem=elytron/http-authentication-factory=example-fs-http-auth:remove()
+
+/subsystem=elytron/security-domain=exampleFsSD:remove()
+
+/subsystem=elytron/filesystem-realm=exampleFsRealm:remove-identity(identity=jane)
+
+/subsystem=elytron/filesystem-realm=exampleFsRealm:remove()
+
+reload

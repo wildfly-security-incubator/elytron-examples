@@ -1,0 +1,37 @@
+# Batch script to enable Elytron for the quickstart application in the JBoss EAP server
+
+# Start batching commands
+batch
+
+# Configure a filesystem realm with a single identity in upper case
+/subsystem=elytron/filesystem-realm=exampleRealm:add(path=fs-realm-users, relative-to=jboss.server.config.dir)
+/subsystem=elytron/filesystem-realm=exampleRealm:add-identity(identity=QUICKSTARTUSER)
+/subsystem=elytron/filesystem-realm=exampleRealm:set-password(clear={password="quickstartPwd1!"}, identity=QUICKSTARTUSER)
+/subsystem=elytron/filesystem-realm=exampleRealm:add-identity-attribute(identity=QUICKSTARTUSER, name=Roles, value=["Admin", "Guest"])
+
+# Add a simple role decoder
+/subsystem=elytron/simple-role-decoder=from-roles-attribute:add(attribute=Roles)
+
+# Add a case-principal-transformer to adjust the principal to upper case
+/subsystem=elytron/case-principal-transformer=myTransformer:add(upper-case=true)
+
+# Configure a new security domain to use our filesystem realm, case-principal transformer and role decoder
+/subsystem=elytron/security-domain=caseDomain:add(realms=[{realm=exampleRealm}], \
+default-realm=exampleRealm,permission-mapper=default-permission-mapper, pre-realm-principal-transformer=myTransformer)
+
+# Add the case security domain mapping in the EJB3 subsystem
+/subsystem=ejb3/application-security-domain=other:add(security-domain=caseDomain)
+
+# Update the sasl-authentication-factory to use the caseDomain
+/subsystem=elytron/sasl-authentication-factory=application-sasl-authentication:write-attribute(name=security-domain, value=caseDomain)
+
+# Update the http-remoting-connector to use the application-sasl-authentication factory
+/subsystem=remoting/http-connector=http-remoting-connector:write-attribute(name=sasl-authentication-factory,value=application-sasl-authentication)
+
+# Run the batch commands
+run-batch
+
+# Reload the server configuration
+reload
+
+

@@ -1,0 +1,33 @@
+# Batch script to restore the JBEAP configuration that was modified to run the quickstart
+
+# Start batching commands
+batch
+
+# Remove the application security domain mapping from the EJB3 subsystem
+/subsystem=ejb3/application-security-domain=other:remove
+
+# Restore the sasl-authentication-factory to use legacy application security domain
+/subsystem=elytron/sasl-authentication-factory=application-sasl-authentication:write-attribute(name=security-domain, value=ApplicationDomain)
+
+# Remove the security domain using the filesystem realm
+/subsystem=elytron/security-domain=caseDomain:remove()
+
+# Remove the case principal transformer
+/subsystem=elytron/case-principal-transformer=myTransformer:remove()
+
+# Remove the simple role decoder
+/subsystem=elytron/simple-role-decoder=from-roles-attribute:remove()
+
+# Remove the filesystem realm
+/subsystem=elytron/filesystem-realm=exampleRealm:remove()
+
+# Restore the http-remoting-connector configuration
+/subsystem=remoting/http-connector=http-remoting-connector:undefine-attribute(name=sasl-authentication-factory)
+
+# Run the batch commands
+run-batch
+
+# Reload the server configuration
+reload
+
+

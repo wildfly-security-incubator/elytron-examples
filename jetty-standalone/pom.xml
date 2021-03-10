@@ -26,7 +26,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <version.org.eclipse.jetty.jetty-server>9.4.11.v20180605</version.org.eclipse.jetty.jetty-server>
+        <version.org.eclipse.jetty.jetty-server>11.0.1</version.org.eclipse.jetty.jetty-server>
         <version.org.wildfly.security.wildfly-elytron>1.6.0.Final</version.org.wildfly.security.wildfly-elytron>
         <version.org.wildfly.security.elytron-web.jetty-server>1.0.0.Beta1</version.org.wildfly.security.elytron-web.jetty-server>
     </properties>

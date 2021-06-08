@@ -1,0 +1,79 @@
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.wildfly.security.examples</groupId>
+    <artifactId>ejb-http</artifactId>
+    <version>1.0.0.Alpha1-SNAPSHOT</version>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <version.org.wildfly.wildfly-ejb-client-bom>23.0.2.Final</version.org.wildfly.wildfly-ejb-client-bom>
+        <version.org.wildfly.security.wildfly-elytron>1.16.0.Final</version.org.wildfly.security.wildfly-elytron>
+        <version.org.jboss.spec.javax.annotation.jboss-annotations-api_1.3._spec>2.0.1.Final</version.org.jboss.spec.javax.annotation.jboss-annotations-api_1.3._spec>
+        <version.org.wildfly.plugins.wildfly-maven-plugins>2.0.2.Final</version.org.wildfly.plugins.wildfly-maven-plugins>
+        <version.org.apache.maven.plugins.maven-ejb-plugins>3.2</version.org.apache.maven.plugins.maven-ejb-plugins>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.wildfly</groupId>
+            <artifactId>wildfly-ejb-client-bom</artifactId>
+            <version>${version.org.wildfly.wildfly-ejb-client-bom}</version>
+            <type>pom</type>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.wildfly.security</groupId>
+            <artifactId>wildfly-elytron</artifactId>
+            <version>${version.org.wildfly.security.wildfly-elytron}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.annotation</groupId>
+            <artifactId>jboss-annotations-api_1.3_spec</artifactId>
+            <scope>provided</scope>
+            <version>${version.org.jboss.spec.javax.annotation.jboss-annotations-api_1.3._spec}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>${version.org.wildfly.plugins.wildfly-maven-plugins}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ejb-plugin</artifactId>
+                <configuration>
+                    <ejbVersion>${version.org.apache.maven.plugins.maven-ejb-plugins}</ejbVersion>
+                    <generateClient>true</generateClient>
+                </configuration>
+            </plugin>
+            <!-- Add the Maven exec plug-in to allow us to run a Java program via Maven -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <configuration>
+                    <executable>java</executable>
+                    <workingDirectory>${project.build.directory}/exec-working-directory</workingDirectory>
+                    <arguments>
+                        <!-- automatically creates the classpath using all project dependencies,
+                                      also adding the project build directory -->
+                        <argument>-classpath</argument>
+                        <classpath></classpath>
+                        <argument>org.wildfly.security.examples.RemoteClient</argument>
+                    </arguments>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

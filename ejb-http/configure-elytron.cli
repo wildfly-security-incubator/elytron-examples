@@ -1,0 +1,41 @@
+# Batch script to enable elytron for the quickstart application in the JBoss EAP server
+
+# Start batching commands
+batch
+
+# Add filesystem realm that resides in directory fs-realm-users inside the base configuration directory defined by jboss.server.config.dir property.
+/subsystem=elytron/filesystem-realm=fsRealm:add(path=fs-realm-users, relative-to=jboss.server.config.dir)
+
+# Add the quickstart identity
+/subsystem=elytron/filesystem-realm=fsRealm:add-identity(identity=quickstartUser)
+
+# Add the quickstart password
+/subsystem=elytron/filesystem-realm=fsRealm:set-password(clear={password=quickstartPwd1!},identity=quickstartUser)
+
+# Add the role for quickstart identity
+/subsystem=elytron/filesystem-realm=fsRealm:add-identity-attribute(identity=quickstartUser, name=Roles, value=[guest])
+
+# Add a simple-role-decoder
+/subsystem=elytron/simple-role-decoder=from-roles-attribute:add(attribute=Roles)
+
+# Configure the security domain using the filesystem realm
+/subsystem=elytron/security-domain=fsSD:add(realms=[{realm=fsRealm, role-decoder=from-roles-attribute}], default-realm=fsRealm,permission-mapper=default-permission-mapper)
+
+# Configure the http-authentication-factory
+/subsystem=elytron/http-authentication-factory=example-http-auth:add(http-server-mechanism-factory=global,security-domain=fsSD,mechanism-configurations=[{mechanism-name=BASIC,mechanism-realm-configurations=[{realm-name=fsRealm}]}])
+
+# Undefine the legacy security realm
+/subsystem=undertow/server=default-server/host=default-host/setting=http-invoker:undefine-attribute(name=security-realm)
+
+# Configure the http-invoker to reference our http-authentication-factory
+/subsystem=undertow/server=default-server/host=default-host/setting=http-invoker:write-attribute(name=http-authentication-factory, value=example-http-auth)
+
+# Add the application security domain mapping in the EJB3 subsystem
+/subsystem=ejb3/application-security-domain=other:add(security-domain=fsSD)
+
+# Run the batch commands
+run-batch
+
+# Reload the server configuration
+reload
+

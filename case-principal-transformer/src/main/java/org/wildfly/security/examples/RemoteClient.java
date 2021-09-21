@@ -38,7 +38,7 @@ public class RemoteClient {
         jndiProperties.put(Context.PROVIDER_URL, "remote+http://localhost:8080");
         final Context context = new InitialContext(jndiProperties);
 
-        SecuredEJBRemote reference = (SecuredEJBRemote) context.lookup("ejb:/ejb-security/SecuredEJB!"
+        SecuredEJBRemote reference = (SecuredEJBRemote) context.lookup("ejb:/case-principal-transformer/SecuredEJB!"
                 + SecuredEJBRemote.class.getName());
 
         System.out.println("\n\n\n* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\n\n");

@@ -1,0 +1,24 @@
+# Batch script to enable elytron for the quickstart application in the JBoss EAP server
+
+# Start batching commands
+batch
+
+/subsystem=elytron/filesystem-realm=myFsRealm:add(path=my-fs-realm-users,relative-to=jboss.server.config.dir)
+
+/subsystem=elytron/filesystem-realm=myFsRealm:add-identity(identity=joe)
+
+/subsystem=elytron/filesystem-realm=myFsRealm:add-identity-attribute(identity=joe, name=Roles, value=["123-user","123-admin"])
+
+/subsystem=elytron/simple-role-decoder=from-roles-attribute:add(attribute=Roles)
+
+/subsystem=elytron/regex-role-mapper=rrm:add(pattern=".*-([a-z]*)", replacement="$1", keep-non-mapped="false", replace-all="false")
+
+/subsystem=elytron/security-domain=mySD:add(realms=[{realm=myFsRealm,role-decoder=from-roles-attribute}],role-mapper=rrm,default-realm=myFsRealm,permission-mapper=default-permission-mapper)
+
+# Run the batch commands
+run-batch
+
+# Reload the server configuration
+reload
+
+

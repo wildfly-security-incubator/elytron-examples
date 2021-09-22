@@ -1,0 +1,12 @@
+/subsystem=elytron/security-domain=mySD:remove()
+
+/subsystem=elytron/regex-role-mapper=rrm:remove()
+
+/subsystem=elytron/simple-role-decoder=from-roles-attribute:remove()
+
+/subsystem=elytron/filesystem-realm=myFsRealm:remove-identity(identity=joe)
+
+/subsystem=elytron/filesystem-realm=myFsRealm:remove()
+
+reload
+

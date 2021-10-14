@@ -1,0 +1,25 @@
+batch
+
+undeploy demo-security.war
+
+/subsystem=undertow/application-security-domain=httpSD:remove()
+
+/subsystem=elytron/http-authentication-factory=example-distributed-http-auth:remove()
+
+/subsystem=elytron/security-domain=distributedSD:remove()
+
+#/subsystem=elytron/filesystem-realm=FsRealm1:remove-identity(identity=user1)
+
+#/subsystem=elytron/filesystem-realm=FsRealm2:remove-identity(identity=user2)
+
+/subsystem=elytron/distributed-realm=distributedRealm:remove()
+
+/subsystem=elytron/filesystem-realm=FsRealm1:remove()
+
+/subsystem=elytron/filesystem-realm=FsRealm2:remove()
+
+/subsystem=elytron/simple-role-decoder=from-roles-attribute:remove()
+
+run-batch
+
+reload

@@ -1,0 +1,27 @@
+if (outcome != success) of /subsystem=elytron/simple-role-decoder=from-roles-attribute:read-resource
+ /subsystem=elytron/simple-role-decoder=from-roles-attribute:add(attribute=Roles)
+end-if
+
+batch
+/subsystem=elytron/filesystem-realm=FsRealm1:add(path=demofs-realm-users1,relative-to=jboss.server.config.dir)
+/subsystem=elytron/filesystem-realm=FsRealm1:add-identity(identity=user1)
+/subsystem=elytron/filesystem-realm=FsRealm1:set-password(identity=user1,clear={password="passwordUser1"})
+/subsystem=elytron/filesystem-realm=FsRealm1:add-identity-attribute(identity=user1,name=Roles, value=["Admin"])
+
+/subsystem=elytron/filesystem-realm=FsRealm2:add(path=demofs-realm-users2,relative-to=jboss.server.config.dir)
+/subsystem=elytron/filesystem-realm=FsRealm2:add-identity(identity=user2)
+/subsystem=elytron/filesystem-realm=FsRealm2:set-password(identity=user2,clear={password="passwordUser2"})
+/subsystem=elytron/filesystem-realm=FsRealm2:add-identity-attribute(identity=user2,name=Roles, value=["Admin"])
+
+# Add distributed realm that combines both filesystem realms
+/subsystem=elytron/distributed-realm=distributedRealm:add(realms=[FsRealm1, FsRealm2])
+
+# Add security domain distributedSD that uses distributedRealm and from-roles-attribute role decoder
+/subsystem=elytron/security-domain=distributedSD:add(default-realm=distributedRealm,permission-mapper=default-permission-mapper,realms=[{realm=distributedRealm,role-decoder="from-roles-attribute"}])
+ 
+# Configure HTTP authentication factory to use distributedSD and BASIC auth mechanism and configure undertow to use this http authentication factory
+/subsystem=elytron/http-authentication-factory=example-distributed-http-auth:add(http-server-mechanism-factory="global",mechanism-configurations=[{mechanism-name="BASIC",mechanism-realm-configurations=[{realm-name="FSRealmUsers"}]}],security-domain=distributedSD)
+/subsystem=undertow/application-security-domain=httpSD:add(http-authentication-factory=example-distributed-http-auth)
+
+run-batch
+reload

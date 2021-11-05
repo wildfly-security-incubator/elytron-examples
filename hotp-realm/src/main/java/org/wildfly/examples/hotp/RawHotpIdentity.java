@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.wildfly.examples;
+package org.wildfly.examples.hotp;
 
 import java.util.ArrayList;
 import java.util.Collections;

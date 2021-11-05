@@ -14,16 +14,33 @@
  * limitations under the License.
  */
 
-package org.wildfly.examples;
+package org.wildfly.examples.hotp;
 
+import static org.wildfly.examples.hotp.OneTimePasswordAlgorithm.generateOTP;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
 import java.security.spec.AlgorithmParameterSpec;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
+
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
+import javax.json.bind.JsonbConfig;
 
 import org.wildfly.security.auth.SupportLevel;
 import org.wildfly.security.auth.server.RealmIdentity;
 import org.wildfly.security.auth.server.RealmUnavailableException;
 import org.wildfly.security.auth.server.SecurityRealm;
+import org.wildfly.security.authz.Attributes;
+import org.wildfly.security.authz.AuthorizationIdentity;
+import org.wildfly.security.authz.MapAttributes;
 import org.wildfly.security.credential.Credential;
 import org.wildfly.security.evidence.Evidence;
 import org.wildfly.security.evidence.PasswordGuessEvidence;
@@ -36,10 +53,28 @@ import org.wildfly.security.evidence.PasswordGuessEvidence;
  */
 public class HotpSecurityRealm implements SecurityRealm {
 
+    public static String PATH = HotpSecurityRealm.class.getName() + ".path";
+
     private volatile boolean initialised = false;
+    private volatile File identityFile;
+    private volatile RealmData realmData;
 
     public void initialize(final Map<String, String> configuration) {
-        // TODO Load identities from file which must be specified in the configuration.
+        if (!configuration.containsKey(PATH)) {
+            throw new IllegalStateException("No path file has been specified.");
+        }
+
+        File file = new File(configuration.get(PATH));
+        if (!file.exists()) {
+            throw new IllegalStateException(String.format("File \"%s\" does not exist.", file.getAbsolutePath()));
+        }
+
+        Jsonb jsonb = JsonbBuilder.create();
+        try (FileInputStream fis = new FileInputStream(file)) {
+            realmData = jsonb.fromJson(fis, RealmData.class);
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to load identities.", e);
+        }
 
         initialised = true;
     }
@@ -49,14 +84,27 @@ public class HotpSecurityRealm implements SecurityRealm {
      *
      * To be called after each evidence verification to output the set of identities and updated counters.
      */
-    void save() {
+    synchronized void save() throws IOException {
+        JsonbConfig config = new JsonbConfig().withFormatting(true);
 
+        Jsonb jsonb = JsonbBuilder.create(config);
+
+        try (FileOutputStream fos = new FileOutputStream(identityFile)) {
+            jsonb.toJson(realmData, fos);
+        }
     }
 
     @Override
     public RealmIdentity getRealmIdentity(Principal principal) throws RealmUnavailableException {
         if (!initialised) {
             throw new RealmUnavailableException("This security realm has not been initialised.");
+        }
+
+        String name = principal.getName();
+        for (RawHotpIdentity identity : realmData.getIdentities()) {
+            if (name.equals(identity.getName())) {
+                return new HotpRealmIdentity(principal, identity);
+            }
         }
 
         return RealmIdentity.NON_EXISTENT;
@@ -83,15 +131,16 @@ public class HotpSecurityRealm implements SecurityRealm {
     class HotpRealmIdentity implements RealmIdentity {
 
         private final Principal principal;
+        private final RawHotpIdentity rawIdentity;
 
-        HotpRealmIdentity(final Principal principal) {
+        HotpRealmIdentity(final Principal principal, final RawHotpIdentity rawIdentity) {
             this.principal = principal;
+            this.rawIdentity = rawIdentity;
         }
 
         @Override
         public Principal getRealmIdentityPrincipal() {
-            // TODO Auto-generated method stub
-            return null;
+            return principal;
         }
 
         @Override
@@ -114,8 +163,35 @@ public class HotpSecurityRealm implements SecurityRealm {
 
         @Override
         public boolean verifyEvidence(Evidence evidence) throws RealmUnavailableException {
-            // TODO Auto-generated method stub
+            if (evidence instanceof PasswordGuessEvidence) {
+                PasswordGuessEvidence pge = (PasswordGuessEvidence) evidence;
+                String guess = new String(pge.getGuess());
+
+                synchronized(rawIdentity) {
+                    long thisCount = rawIdentity.getLastHotpCount() + 1;
+                    try {
+                        String nextOTP = generateOTP(rawIdentity.getRawHotpSecret(), thisCount, 6, false, -1);
+                        if (guess.equals(nextOTP)) {
+                            rawIdentity.setLastHotpCount(thisCount);
+                            save();
+
+                            return true;
+                        }
+                    } catch (InvalidKeyException | NoSuchAlgorithmException | IOException e) {
+                        throw new RealmUnavailableException("Realm unable to verify OTPs", e);
+                    }
+                }
+            }
+
             return false;
+        }
+
+        @Override
+        public AuthorizationIdentity getAuthorizationIdentity() throws RealmUnavailableException {
+            Map<String, Collection<String>> attributeMap = Collections.singletonMap("groups", rawIdentity.getGroups());
+            Attributes attributes = new MapAttributes(attributeMap);
+
+            return AuthorizationIdentity.basicIdentity(attributes);
         }
 
         @Override

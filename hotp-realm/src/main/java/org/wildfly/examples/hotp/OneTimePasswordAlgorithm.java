@@ -22,7 +22,7 @@
     * documentation and/or software.
     */
 
-package org.wildfly.examples;
+package org.wildfly.examples.hotp;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;

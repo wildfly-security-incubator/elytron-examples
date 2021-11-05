@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.wildfly.examples;
+package org.wildfly.examples.hotp;
 
 import java.io.File;
 import java.io.FileOutputStream;

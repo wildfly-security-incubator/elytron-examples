@@ -67,6 +67,12 @@
             <artifactId>wildfly-elytron-auth-server</artifactId>
         </dependency>
 
+        <!--Test scope-->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

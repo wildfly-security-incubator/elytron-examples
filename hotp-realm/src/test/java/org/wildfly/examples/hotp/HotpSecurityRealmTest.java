@@ -14,25 +14,36 @@
  * limitations under the License.
  */
 
-package org.wildfly.examples;
+package org.wildfly.examples.hotp;
 
-import java.util.List;
+import java.util.Collections;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.wildfly.security.auth.server.SecurityRealm;
 
 /**
- *
+ * Simple test case to test the HOTP security realm implementation.
  *
  * @author <a href="mailto:darran.lofthouse@jboss.com">Darran Lofthouse</a>
  */
-public class RealmData {
+public class HotpSecurityRealmTest {
 
-    private List<RawHotpIdentity> identities;
+    private static SecurityRealm securityRealm;
 
-    public List<RawHotpIdentity> getIdentities() {
-        return identities;
+    @BeforeClass
+    public static void createRealm() {
+        HotpSecurityRealm securityRealm = new HotpSecurityRealm();
+        securityRealm.initialize(Collections.singletonMap(null, null));
+
+        HotpSecurityRealmTest.securityRealm = securityRealm;
     }
 
-    public void setIdentities(List<RawHotpIdentity> identities) {
-        this.identities = identities;
+    @AfterClass
+    public static void disposeRealm() {
+        securityRealm = null;
     }
+
+
 
 }

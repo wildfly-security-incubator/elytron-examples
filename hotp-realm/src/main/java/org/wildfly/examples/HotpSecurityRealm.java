@@ -56,7 +56,7 @@ public class HotpSecurityRealm implements SecurityRealm {
     @Override
     public RealmIdentity getRealmIdentity(Principal principal) throws RealmUnavailableException {
         if (!initialised) {
-            throw new RealmUnavailableException("This security realm has not been initialised.")l
+            throw new RealmUnavailableException("This security realm has not been initialised.");
         }
 
         return RealmIdentity.NON_EXISTENT;

@@ -70,11 +70,15 @@ public class HotpSecurityRealm implements SecurityRealm {
         }
         identityFile = file;
 
+        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(HotpSecurityRealm.class.getClassLoader());
         Jsonb jsonb = JsonbBuilder.create();
         try (FileInputStream fis = new FileInputStream(file)) {
             realmData = jsonb.fromJson(fis, RealmData.class);
         } catch (IOException e) {
             throw new IllegalStateException("Unable to load identities.", e);
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldClassLoader);
         }
 
         initialised = true;
@@ -86,12 +90,17 @@ public class HotpSecurityRealm implements SecurityRealm {
      * To be called after each evidence verification to output the set of identities and updated counters.
      */
     synchronized void save() throws IOException {
+        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(HotpSecurityRealm.class.getClassLoader());
+
         JsonbConfig config = new JsonbConfig().withFormatting(true);
 
         Jsonb jsonb = JsonbBuilder.create(config);
 
         try (FileOutputStream fos = new FileOutputStream(identityFile)) {
             jsonb.toJson(realmData, fos);
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldClassLoader);
         }
     }
 

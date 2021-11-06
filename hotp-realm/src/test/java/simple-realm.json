@@ -5,7 +5,7 @@
                 "Users"
             ],
             "hotpSecret": "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ",
-            "lastHotpCount": 0,
+            "lastHotpCount": -1,
             "name": "TestIdentity"
         }
     ]

@@ -68,6 +68,7 @@ public class HotpSecurityRealm implements SecurityRealm {
         if (!file.exists()) {
             throw new IllegalStateException(String.format("File \"%s\" does not exist.", file.getAbsolutePath()));
         }
+        identityFile = file;
 
         Jsonb jsonb = JsonbBuilder.create();
         try (FileInputStream fis = new FileInputStream(file)) {

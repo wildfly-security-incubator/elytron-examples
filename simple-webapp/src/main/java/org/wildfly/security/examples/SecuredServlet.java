@@ -28,6 +28,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * A simple secured HTTP servlet.
@@ -51,6 +52,27 @@ public class SecuredServlet extends HttpServlet {
             writer.print(user != null ? user.getName() : "NO AUTHENTICATED USER");
             writer.print("'");
             writer.println("    </p>");
+
+            // Display some information about the HTTP session use if it exists.
+            HttpSession session = req.getSession(false);
+            if (session == null) {
+                writer.println("    <p>No HTTP Session exists.</p>");
+            } else {
+                Integer counter = (Integer) session.getValue("AccessCounter");
+                if (counter == null) {
+                    counter = 1;
+                } else {
+                    counter = counter + 1;
+                }
+                session.putValue("AccessCounter", counter);
+                writer.println(String.format("    <p>Session %s accessed %d time(s).</p>", session.getId(), counter));
+            }
+
+            // Display link to allow secured page to be revisited.
+            writer.println("    <p>");
+            writer.println("        <a href=\"./secured\">Access Secured Servlet</a>");
+            writer.println("    </p>");
+
             writer.println("  </body>");
             writer.println("</html>");
         }

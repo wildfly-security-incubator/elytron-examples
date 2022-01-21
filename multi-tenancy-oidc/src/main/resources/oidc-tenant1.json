@@ -1,0 +1,7 @@
+{
+    "client-id" : "myclient",
+    "provider-url" : "http://localhost:8080/auth/realms/tenant1",
+    "public-client" : "true",
+    "ssl-required" : "EXTERNAL"
+}
+

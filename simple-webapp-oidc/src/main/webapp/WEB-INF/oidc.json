@@ -1,6 +1,6 @@
 {
     "client-id" : "myclient",
-    "provider-url" : "http://localhost:8080/auth/realms/myrealm",
+    "provider-url" : "${env.OIDC_PROVIDER_URL:http://localhost:8080/auth/realms/myrealm}",
     "public-client" : "true",
     "ssl-required" : "EXTERNAL"
 }

@@ -17,11 +17,11 @@ import org.wildfly.security.password.PasswordFactory;
 import org.wildfly.security.password.interfaces.ClearPassword;
 import org.wildfly.security.password.spec.ClearPasswordSpec;
 
-public class MyCredentialStoreSpi extends CredentialStoreSpi {
+public class MyCredentialStore extends CredentialStoreSpi {
 
     private PasswordFactory passwordFactory;
 
-    public MyCredentialStoreSpi() {
+    public MyCredentialStore() {
         try {
             passwordFactory = PasswordFactory.getInstance(ClearPassword.ALGORITHM_CLEAR);
         } catch (NoSuchAlgorithmException e) {

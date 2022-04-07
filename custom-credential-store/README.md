@@ -23,18 +23,16 @@ Commands to load the provider into the wilfly app:
 
 This is not working:
 
-[standalone@localhost:9990 /] /subsystem=elytron/credential-store=mystore:add(providers=my-credential-provider,credential-reference={clear-text='jaja'},location='cred/store.jks')
+	[standalone@localhost:9990 /] /subsystem=elytron/credential-store=mystore:add(providers=my-credential-provider,credential-reference={clear-text='jaja'},location='cred/store.jks')
 
 Error message:
 
-{
+	{
     "outcome" => "failed",
-    "failure-description" => {"WFLYCTL0080: Failed services" => {"org.wildfly.security.credential-store.mystore" => "WFLYELY00004: Unable to start the s
-ervice.
-    Caused by: java.security.NoSuchProviderException: WFLYELY00914: Provider loader 'my-credential-provider' cannot supply Credential Store provider of 
-type 'KeyStoreCredentialStore'"}},
+    "failure-description" => {"WFLYCTL0080: Failed services" => {"org.wildfly.security.credential-store.mystore" => "WFLYELY00004: Unable to start the service.
+    Caused by: java.security.NoSuchProviderException: WFLYELY00914: Provider loader 'my-credential-provider' cannot supply Credential Store provider of type 'KeyStoreCredentialStore'"}},
     "rolled-back" => true
-}
+	}
 
 
 

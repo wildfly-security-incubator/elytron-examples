@@ -20,3 +20,20 @@ You are disconnected at the moment. Type 'connect' to connect to the server or '
 [standalone@localhost:9990 /] reload
 [standalone@localhost:9990 /] /subsystem=elytron/provider-loader=my-credential-provider:read-attribute(name=loaded-providers)
 
+This is not working:
+
+[standalone@localhost:9990 /] /subsystem=elytron/credential-store=mystore:add(providers=my-credential-provider,credential-reference={clear-text='jaja'},location='cred/store.jks')
+
+Error message:
+
+{
+    "outcome" => "failed",
+    "failure-description" => {"WFLYCTL0080: Failed services" => {"org.wildfly.security.credential-store.mystore" => "WFLYELY00004: Unable to start the s
+ervice.
+    Caused by: java.security.NoSuchProviderException: WFLYELY00914: Provider loader 'my-credential-provider' cannot supply Credential Store provider of 
+type 'KeyStoreCredentialStore'"}},
+    "rolled-back" => true
+}
+
+
+

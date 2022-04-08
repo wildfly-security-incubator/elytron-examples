@@ -49,17 +49,16 @@ public class MyCredentialStore extends CredentialStoreSpi {
     }
 
     @Override
-    public <C extends Credential> C retrieve(String keyStorePath, Class<C> credentialType, String s1,
+    public <C extends Credential> C retrieve(String credentialAlias, Class<C> credentialType, String credentialAlgo,
                                              AlgorithmParameterSpec algorithmParameterSpec,
                                              CredentialStore.ProtectionParameter protectionParameter)
         throws CredentialStoreException {
-        byte[] absoluteFilename = keyStorePath.getBytes();
-        byte[] passwordUta = absoluteFilename;
+        byte[] credentialAliasBytes = credentialAlias.getBytes();
 
         final Password password;
         try {
             password =
-                passwordFactory.generatePassword(new ClearPasswordSpec(new String(passwordUta,
+                passwordFactory.generatePassword(new ClearPasswordSpec(new String(credentialAliasBytes,
                     Charset.forName("US-ASCII")).toCharArray()));
             final Credential credential = new PasswordCredential(password);
             return credentialType.cast(credential);

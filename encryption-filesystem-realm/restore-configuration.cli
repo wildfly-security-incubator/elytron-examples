@@ -1,0 +1,27 @@
+# Batch script to restore the JBEAP configuration that was modified to run the quickstart
+
+# Start batching commands
+batch
+
+# Remove the security domain using the filesystem realm
+/subsystem=elytron/security-domain=fsDomain:remove()
+
+# Add the case security domain mapping in the Undertow subsystem
+/subsystem=undertow/application-security-domain=other:write-attribute(name=security-domain, value=ApplicationDomain)
+
+# Remove the simple role decoder
+/subsystem=elytron/simple-role-decoder=from-roles-attribute:remove()
+
+/subsystem=elytron/filesystem-realm=fsRealm:remove-identity(identity=quickstartUser)
+
+# Remove the filesystem realm
+/subsystem=elytron/filesystem-realm=fsRealm:remove()
+
+# Remove the credential store
+#/subsystem=elytron/secret-key-credential-store=credstore:remove()
+
+# Run the batch commands
+run-batch
+
+# Reload the server configuration
+reload

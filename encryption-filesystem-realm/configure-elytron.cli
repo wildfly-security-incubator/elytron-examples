@@ -1,0 +1,28 @@
+# Batch script to enable Elytron for the quickstart application in the JBoss EAP server
+
+# Configure the credential store that will contain the SecretKey to encrypt and decrypt the filesystem realm
+/subsystem=elytron/secret-key-credential-store=credstore:add(path=mycredstore.cs, relative-to=jboss.server.config.dir, create=true, populate=true)
+
+# Start batching commands
+batch
+
+# Configure a filesystem realm with a single identity
+/subsystem=elytron/filesystem-realm=fsRealm:add(path=fs-realm,relative-to=jboss.server.config.dir, credential-store=credstore, secret-key=key)
+/subsystem=elytron/filesystem-realm=fsRealm:add-identity(identity=quickstartUser)
+/subsystem=elytron/filesystem-realm=fsRealm:set-password(digest={algorithm=digest-md5, realm=fsRealm, password=password123!}, identity=quickstartUser)
+/subsystem=elytron/filesystem-realm=fsRealm:add-identity-attribute(identity=quickstartUser, name=Roles, value=["Admin", "Guest"])
+
+# Add a simple role decoder
+/subsystem=elytron/simple-role-decoder=from-roles-attribute:add(attribute=Roles)
+
+# Configure a new security domain to use our filesystem realm and role decoder
+/subsystem=elytron/security-domain=fsDomain:add(realms=[{realm=fsRealm, role-decoder=from-roles-attribute}], default-realm=fsRealm,permission-mapper=default-permission-mapper)
+
+# Add the case security domain mapping in the Undertow subsystem
+/subsystem=undertow/application-security-domain=other:write-attribute(name=security-domain, value=fsDomain)
+
+# Run the batch commands
+run-batch
+
+# Reload the server configuration
+reload

@@ -26,8 +26,8 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <version.io.undertow>1.4.18.Final</version.io.undertow>
-        <version.org.wildfly.security.wildfly-elytron>1.1.0.Final</version.org.wildfly.security.wildfly-elytron>
+        <version.io.undertow>2.2.18.Final</version.io.undertow>
+        <version.org.wildfly.security.wildfly-elytron>1.19.0.Final</version.org.wildfly.security.wildfly-elytron>
         <version.org.wildfly.security.elytron-web.undertow-server>1.0.0.Final</version.org.wildfly.security.elytron-web.undertow-server>
     </properties>
 

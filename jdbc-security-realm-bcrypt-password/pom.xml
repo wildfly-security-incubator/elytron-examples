@@ -28,7 +28,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.org.wildfly.security.wildfly-elytron>1.9.1.Final</version.org.wildfly.security.wildfly-elytron>
+        <version.org.wildfly.security.wildfly-elytron>1.19.0.Final</version.org.wildfly.security.wildfly-elytron>
     </properties>
 
     <packaging>war</packaging>

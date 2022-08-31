@@ -1,0 +1,97 @@
+commit 13da863fb6d9c060d81851e2e26f6082576028a5
+Author: Farah Juma <fjuma@redhat.com>
+Date:   Mon Mar 21 14:53:12 2022 -0400
+
+    Add OpenShift profile
+
+diff --git a/simple-webapp-oidc/pom.xml b/simple-webapp-oidc/pom.xml
+index a724ab2..d06e882 100644
+--- a/simple-webapp-oidc/pom.xml
++++ b/simple-webapp-oidc/pom.xml
+@@ -43,16 +43,76 @@
+         </dependency>
+     </dependencies>
+ 
+-    <build>
+-        <finalName>simple-webapp-oidc</finalName>
+-        <plugins>
+-            <plugin>
+-                <groupId>org.wildfly.plugins</groupId>
+-                <artifactId>wildfly-maven-plugin</artifactId>
+-                <version>${version.wildfly.maven.plugin}</version>
+-            </plugin>
+-        </plugins>
+-    </build>
++    <profiles>
++        <profile>
++            <id>default</id>
++            <activation>
++                <activeByDefault>true</activeByDefault>
++            </activation>
++            <build>
++                <finalName>simple-webapp-oidc</finalName>
++                <plugins>
++                    <plugin>
++                        <groupId>org.wildfly.plugins</groupId>
++                        <artifactId>wildfly-maven-plugin</artifactId>
++                        <version>${version.wildfly.maven.plugin}</version>
++                    </plugin>
+ 
++                </plugins>
++            </build>
++        </profile>
++        <profile>
++            <id>bootable-jar-openshift</id>
++            <build>
++                <plugins>
++                    <plugin>
++                        <groupId>org.wildfly.plugins</groupId>
++                        <artifactId>wildfly-jar-maven-plugin</artifactId>
++                        <version>${version.wildfly-jar.maven.plugin}</version>
++                        <configuration>
++                            <feature-pack-location>wildfly@maven(org.jboss.universe:community-universe)#${version.server.bootable-jar}</feature-pack-location>
++                            <layers>
++                                <layer>cloud-server</layer>
++                                <layer>elytron-oidc-client</layer>
++                            </layers>
++                            <plugin-options>
++                                <jboss-fork-embedded>true</jboss-fork-embedded>
++                            </plugin-options>
++                            <cloud/>
++                        </configuration>
++                        <executions>
++                            <execution>
++                                <goals>
++                                    <goal>package</goal>
++                                </goals>
++                            </execution>
++                        </executions>
++                    </plugin>
++                    <plugin>
++                        <groupId>org.eclipse.jkube</groupId>
++                        <artifactId>openshift-maven-plugin</artifactId>
++                        <version>${version.jkube.maven.plugin}</version>
++                        <executions>
++                            <execution>
++                                <goals>
++                                    <goal>resource</goal>
++                                    <goal>build</goal>
++                                </goals>
++                            </execution>
++                        </executions>
++                        <configuration>
++                            <enricher>
++                                <config>
++                                    <jkube-service>
++                                        <type>NodePort</type>
++                                    </jkube-service>
++                                </config>
++                            </enricher>
++                        </configuration>
++                    </plugin>
++                </plugins>
++            </build>
++        </profile>
++    </profiles>
+ 
+ </project>

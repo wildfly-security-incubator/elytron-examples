@@ -6,8 +6,11 @@
       version="4.0">
 
     <login-config>
-        <auth-method>BASIC</auth-method>
-        <realm-name>Simple Realm</realm-name>
+        <auth-method>FORM</auth-method>
+        <form-login-config>
+            <form-login-page>/login.html</form-login-page>
+            <form-error-page>/login-error.html</form-error-page>
+        </form-login-config>
     </login-config>
 
 </web-app>

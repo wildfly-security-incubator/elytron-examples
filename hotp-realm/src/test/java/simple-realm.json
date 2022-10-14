@@ -1,0 +1,12 @@
+{
+    "identities": [
+        {
+            "groups": [
+                "Users"
+            ],
+            "hotpSecret": "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ",
+            "lastHotpCount": -1,
+            "name": "TestIdentity"
+        }
+    ]
+}

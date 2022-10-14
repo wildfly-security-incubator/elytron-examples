@@ -2,7 +2,7 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.wildfly.security.examples</groupId>
-    <artifactId>simple-webapp</artifactId>
+    <artifactId>simple-webapp-form</artifactId>
     <packaging>war</packaging>
     <version>1.0.0.Alpha1-SNAPSHOT</version>
     <name>simple-webapp Maven Webapp</name>

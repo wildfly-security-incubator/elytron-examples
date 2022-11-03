@@ -22,7 +22,6 @@ import java.io.PrintWriter;
 import java.security.Principal;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.HttpMethodConstraint;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;

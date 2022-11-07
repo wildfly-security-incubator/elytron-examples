@@ -32,11 +32,16 @@ public class IdentityEJBClientInterceptor implements EJBClientInterceptor {
 
     @Override
     public void handleInvocation(EJBClientInvocationContext context) throws Exception {
-        SecurityIdentity identity = SecurityDomain.getCurrent().getCurrentSecurityIdentity();
-        identity.runAsSupplierEx(() -> {
+        SecurityDomain securityDomain = SecurityDomain.getCurrent();
+        if (securityDomain != null) {
+            SecurityIdentity identity = securityDomain.getCurrentSecurityIdentity();
+            identity.runAsSupplierEx(() -> {
+                context.sendRequest();
+                return null;
+            });
+        } else {
             context.sendRequest();
-            return null;
-        });
+        }
     }
     @Override
     public Object handleInvocationResult(EJBClientInvocationContext context) throws Exception {

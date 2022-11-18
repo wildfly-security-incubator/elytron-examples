@@ -9,9 +9,6 @@
 # Remove the security domain using the filesystem realm
 /subsystem=elytron/security-domain=fsDomain:remove()
 
-# Remove the simple role decoder
-/subsystem=elytron/simple-role-decoder=from-roles-attribute:remove()
-
 /subsystem=elytron/filesystem-realm=fsRealm:remove-identity(identity=quickstartUser)
 
 # Remove the filesystem realm

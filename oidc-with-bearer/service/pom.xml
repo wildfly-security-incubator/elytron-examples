@@ -20,7 +20,7 @@
 
     <groupId>org.wildfly.security.examples</groupId>
     <artifactId>oidc-with-bearer-service</artifactId>
-    <version>1.0.0.Alpha1-SNAPSHOT</version>
+    <version>2.0.0.Alpha1-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>Quickstart: oidc-with-bearer - service</name>
     <description>Bearer only support for OIDC</description>

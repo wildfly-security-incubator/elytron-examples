@@ -7,7 +7,7 @@
 
     <groupId>org.wildfly.security.examples</groupId>
     <artifactId>password-factory</artifactId>
-    <version>1.0.0.Alpha1-SNAPSHOT</version>
+    <version>2.0.0.Alpha1-SNAPSHOT</version>
 
     <name>password-factory</name>
     <description>A simple password-factory.</description>

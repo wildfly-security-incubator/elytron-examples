@@ -7,7 +7,7 @@
 
     <groupId>org.wildfly.security.examples</groupId>
     <artifactId>credential-store</artifactId>
-    <version>1.0.0.Alpha1-SNAPSHOT</version>
+    <version>2.0.0.Alpha1-SNAPSHOT</version>
 
     <name>credential-store</name>
     <description>A simple CredentialStore example.</description>

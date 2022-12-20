@@ -9,28 +9,39 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
-    <dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.wildfly.bom</groupId>
+                <artifactId>wildfly-ee-with-tools</artifactId>
+                <version>${version.server.bom}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
+    <dependencies>
         <dependency>
-            <groupId>org.jboss.spec.javax.ws.rs</groupId>
-            <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
-            <version>1.0.2.Final</version>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.spec.javax.annotation</groupId>
-            <artifactId>jboss-annotations-api_1.2_spec</artifactId>
-            <version>1.0.2.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>org.wildfly.security</groupId>
-            <artifactId>wildfly-elytron</artifactId>
-            <version>1.19.0.Final</version>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <scope>provided</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.json/json -->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20180813</version>
+            <version>${version.org.json.json}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wildfly.security</groupId>
+            <artifactId>wildfly-elytron</artifactId>
+            <version>${version.org.wildfly.security.wildfly-elytron}</version>
         </dependency>
     </dependencies>
 
@@ -41,13 +52,13 @@
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
-                <version>2.0.0.Final</version>
+                <version>${version.wildfly-maven-plugin}</version>
             </plugin>
 
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
-                <version>${frontend-maven-plugin.version}</version>
+                <version>${version.frontend-maven-plugin}</version>
 
                 <configuration>
                     <nodeVersion>${node.version}</nodeVersion>
@@ -89,7 +100,7 @@
 
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>${version.maven-resources-plugin}</version>
                 <executions>
                     <execution>
                         <id>position-react-build</id>
@@ -113,11 +124,18 @@
     </build>
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <frontendSrcDir>${project.basedir}/src/main/frontend</frontendSrcDir>
         <node.version>v10.13.0</node.version>
         <yarn.version>v1.12.3</yarn.version>
-        <frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
+
+        <version.org.json.json>20220924</version.org.json.json>
+        <version.org.wildfly.security.wildfly-elytron>2.0.0.Final</version.org.wildfly.security.wildfly-elytron>
+        <version.server.bom>27.0.1.Final</version.server.bom>
+
+        <version.frontend-maven-plugin>1.12.1</version.frontend-maven-plugin>
+        <version.maven-resources-plugin>3.3.0</version.maven-resources-plugin>
+        <version.wildfly-maven-plugin>4.0.0.Final</version.wildfly-maven-plugin>
     </properties>
 </project>

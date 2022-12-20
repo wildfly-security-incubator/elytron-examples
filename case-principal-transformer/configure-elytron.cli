@@ -19,14 +19,11 @@ batch
 /subsystem=elytron/security-domain=caseDomain:add(realms=[{realm=exampleRealm}], \
 default-realm=exampleRealm,permission-mapper=default-permission-mapper, pre-realm-principal-transformer=myTransformer)
 
-# Add the case security domain mapping in the EJB3 subsystem
-/subsystem=ejb3/application-security-domain=other:add(security-domain=caseDomain)
+# Set the "other" security domain mapping to "caseDomain"
+/subsystem=ejb3/application-security-domain=other:write-attribute(name=security-domain, value=caseDomain)
 
 # Update the sasl-authentication-factory to use the caseDomain
 /subsystem=elytron/sasl-authentication-factory=application-sasl-authentication:write-attribute(name=security-domain, value=caseDomain)
-
-# Update the http-remoting-connector to use the application-sasl-authentication factory
-/subsystem=remoting/http-connector=http-remoting-connector:write-attribute(name=sasl-authentication-factory,value=application-sasl-authentication)
 
 # Run the batch commands
 run-batch

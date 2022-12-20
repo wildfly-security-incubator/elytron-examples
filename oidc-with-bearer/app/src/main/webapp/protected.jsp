@@ -17,7 +17,7 @@
 
 <%@page contentType="text/html" pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="c" 
-           uri="http://java.sun.com/jsp/jstl/core" %>
+           uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html>
     <head>

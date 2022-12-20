@@ -1,4 +1,4 @@
-Implementing and making use of a custom-principal-transformer
+  Implementing and making use of a custom-principal-transformer
 =============================================================
 
 This example demonstrates how to implement and make use of a simple principal transformer that converts a KeycloakPrincipal to a NamePrincipal.
@@ -13,7 +13,7 @@ Compile:
 Add a module that contains our custom principal transformer:
 
         bin/jboss-cli.sh
-        module add --name=org.wildfly.security.examples.keycloak-principal-transformer --resources=/PATH_TO_ELYTRON_EXAMPLES/elytron-examples/keycloak-principal-transformer/target/keycloak-principal-transformer-1.0.0.Alpha1-SNAPSHOT.jar --dependencies=org.wildfly.security.elytron,org.wildfly.extension.elytron,org.keycloak.keycloak-core
+        module add --name=org.wildfly.security.examples.keycloak-principal-transformer --resources=/PATH_TO_ELYTRON_EXAMPLES/elytron-examples/keycloak-principal-transformer/target/keycloak-principal-transformer-2.0.0.Alpha1-SNAPSHOT.jar --dependencies=org.wildfly.security.elytron,org.wildfly.extension.elytron,org.keycloak.keycloak-adapter-subsystem
 
 Add a ```custom-principal-transformer``` in the Elytron subsystem that references this new module and our custom principal transformer class that is contained in this module:
 

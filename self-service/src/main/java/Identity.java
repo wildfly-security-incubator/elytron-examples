@@ -14,14 +14,26 @@
  * limitations under the License.
  */
 
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import java.util.*;
+import static org.wildfly.security.authz.RoleDecoder.KEY_ROLES;
+import static org.wildfly.security.password.interfaces.ClearPassword.ALGORITHM_CLEAR;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.ForbiddenException;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,9 +49,6 @@ import org.wildfly.security.credential.Credential;
 import org.wildfly.security.credential.PasswordCredential;
 import org.wildfly.security.password.PasswordFactory;
 import org.wildfly.security.password.spec.ClearPasswordSpec;
-
-import static org.wildfly.security.authz.RoleDecoder.KEY_ROLES;
-import static org.wildfly.security.password.interfaces.ClearPassword.ALGORITHM_CLEAR;
 
 @PermitAll
 @Path("/")

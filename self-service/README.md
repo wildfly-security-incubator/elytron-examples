@@ -19,8 +19,12 @@ mvn clean package install wildfly:deploy
 
 To login: **jane** with password **passwordJane**
 
-### To restore wildfly to its initial configuration you can use restore.cli file:
+### To restore wildfly to its initial configuration
+
+Undeploy the package, then you can use restore.cli file:
+
 ```
+mvn wildfly:undeploy
 {path_to_wildfly}/bin/jboss-cli.sh --connect --file=restore.cli (this will restore previous changes to server)
 ```
 

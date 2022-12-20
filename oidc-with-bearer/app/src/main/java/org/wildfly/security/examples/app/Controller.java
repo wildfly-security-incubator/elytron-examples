@@ -16,12 +16,12 @@
  */
 package org.wildfly.security.examples.app;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.Response;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Invocation;
+import jakarta.ws.rs.core.Response;
 import org.wildfly.security.http.oidc.OidcSecurityContext;
 
 public class Controller {

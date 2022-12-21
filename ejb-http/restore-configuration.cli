@@ -3,8 +3,8 @@
 # Start batching commands
 batch
 
-# Remove the application security domain mapping from the EJB3 subsystem
-/subsystem=ejb3/application-security-domain=other:remove
+# Reset the EJB security domain mapping
+/subsystem=ejb3/application-security-domain=other:write-attribute(name=security-domain, value=ApplicationDomain)
 
 # Disable the http-invoker
 /subsystem=undertow/server=default-server/host=default-host/setting=http-invoker:undefine-attribute(name=http-authentication-factory)
@@ -12,11 +12,8 @@ batch
 # Remove the http-authentication-factory
 /subsystem=elytron/http-authentication-factory=example-http-auth:remove()
 
-# Redefine the legacy security realm
-/subsystem=undertow/server=default-server/host=default-host/setting=http-invoker:write-attribute(name=security-realm, value=ApplicationRealm)
-
-# Remove the simple role decoder
-/subsystem=elytron/simple-role-decoder=from-roles-attribute:remove()
+# Redefine the HTTP authentication factory
+/subsystem=undertow/server=default-server/host=default-host/setting=http-invoker:write-attribute(name=http-authentication-factory, value=application-http-authentication)
 
 # Remove the security domain using the filesystem realm
 /subsystem=elytron/security-domain=fsSD:remove()

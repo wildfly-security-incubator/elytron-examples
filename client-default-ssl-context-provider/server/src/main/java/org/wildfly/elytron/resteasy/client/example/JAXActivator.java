@@ -15,8 +15,8 @@
  */
 package org.wildfly.elytron.resteasy.client.example;
 
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.core.Application;
 
 /**
  * JAXActivator is an arbitrary name, what is important is that javax.ws.rs.core.Application is extended

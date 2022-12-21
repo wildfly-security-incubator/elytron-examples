@@ -13,7 +13,7 @@ Compile:
 Add a module that contains our custom principal transformer to WildFly:
 
         bin/jboss-cli.sh
-        module add --name=org.wildfly.security.examples.custom-principal-transformer --resources=/PATH_TO_ELYTRON_EXAMPLES/elytron-examples/custom-principal-transformer/target/custom-principal-transformer-1.0.0.Alpha1-SNAPSHOT.jar --dependencies=org.wildfly.security.elytron,org.wildfly.extension.elytron
+        module add --name=org.wildfly.security.examples.custom-principal-transformer --resources=/PATH_TO_ELYTRON_EXAMPLES/elytron-examples/custom-principal-transformer/target/custom-principal-transformer-2.0.0.Alpha1-SNAPSHOT.jar --dependencies=org.wildfly.security.elytron,org.wildfly.extension.elytron
 
 Add a ```custom-principal-transformer``` in the Elytron subsystem that references this new module and our custom principal transformer class that is contained in this module:
 

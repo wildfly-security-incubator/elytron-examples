@@ -1,6 +1,6 @@
 batch
 
-undeploy demo-security.war
+undeploy distributed-realm-demo.war
 
 /subsystem=undertow/application-security-domain=httpSD:remove()
 

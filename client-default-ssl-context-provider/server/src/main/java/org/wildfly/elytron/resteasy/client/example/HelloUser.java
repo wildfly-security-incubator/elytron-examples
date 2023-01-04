@@ -15,8 +15,8 @@
  */
 package org.wildfly.elytron.resteasy.client.example;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 
 /**
  * Simple REST endpoint that you can access after accepting server's certificate and providing client's certificate.

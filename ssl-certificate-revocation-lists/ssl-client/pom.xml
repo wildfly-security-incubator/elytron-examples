@@ -12,7 +12,7 @@
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <version.org.wildfly.security.wildfly.elytron>1.19.0.Final</version.org.wildfly.security.wildfly.elytron>
+        <version.org.wildfly.security.wildfly.elytron>2.0.0.Final</version.org.wildfly.security.wildfly.elytron>
         <version.org.junit.junit>4.13.1</version.org.junit.junit>
         <version.org.jboss.resteasy.resteasy.client>3.14.0.Final</version.org.jboss.resteasy.resteasy.client>
         <version.org.wildfly.wildfly.client.all>21.0.0.Beta1</version.org.wildfly.wildfly.client.all>

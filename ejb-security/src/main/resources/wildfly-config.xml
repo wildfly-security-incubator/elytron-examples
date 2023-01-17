@@ -21,7 +21,7 @@
             <credential-store name="mycredstore">
                 <attributes>
                     <attribute name="keyStoreType" value="JCEKS"/>
-                    <attribute name="location" value="/PATH/TO/mycredstore.cs"></attribute>
+                    <attribute name="location" value="/tmp/mycredstore.cs"></attribute>
                 </attributes>
                 <protection-parameter-credentials>
                     <clear-password password="StorePassword"/>

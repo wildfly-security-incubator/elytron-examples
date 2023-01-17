@@ -15,7 +15,7 @@
     limitations under the License.
 -->
 <configuration>
-    <authentication-client xmlns="urn:elytron:client:1.5">
+    <authentication-client xmlns="urn:elytron:client:1.7">
         <authentication-rules>
             <rule use-configuration="default-config"/>
         </authentication-rules>

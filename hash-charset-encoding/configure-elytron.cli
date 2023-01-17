@@ -18,7 +18,7 @@ batch
 default-realm=fsRealm,permission-mapper=default-permission-mapper)
 
 # Add the case security domain mapping in the EJB3 subsystem
-/subsystem=ejb3/application-security-domain=other:add(security-domain=fsDomain)
+/subsystem=ejb3/application-security-domain=other:write-attribute(name=security-domain,value=fsDomain)
 
 # Update the sasl-authentication-factory to use the fsDomain
 /subsystem=elytron/sasl-authentication-factory=application-sasl-authentication:write-attribute(name=security-domain, value=fsDomain)

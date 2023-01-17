@@ -4,7 +4,7 @@
 batch
 
 # Remove the application security domain mapping from the EJB3 subsystem
-/subsystem=ejb3/application-security-domain=other:remove
+/subsystem=ejb3/application-security-domain=other:write-attribute(name=security-domain,value=ApplicationDomain)
 
 # Restore the sasl-authentication-factory to use legacy application security domain
 /subsystem=elytron/sasl-authentication-factory=application-sasl-authentication:write-attribute(name=security-domain, value=ApplicationDomain)
@@ -15,7 +15,17 @@ batch
 # Remove the simple role decoder
 /subsystem=elytron/simple-role-decoder=from-roles-attribute:remove()
 
+# Remove the quickstart user identity
 /subsystem=elytron/filesystem-realm=fsRealm:remove-identity(identity=quickstartUser)
+
+# Run the batch commands
+run-batch
+
+# Reload the server configuration
+reload
+
+# Start batching commands again
+batch
 
 # Remove the filesystem realm
 /subsystem=elytron/filesystem-realm=fsRealm:remove()

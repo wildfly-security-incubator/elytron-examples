@@ -1,13 +1,9 @@
-if (outcome != success) of /subsystem=elytron/simple-role-decoder=from-roles-attribute:read-resource
- /subsystem=elytron/simple-role-decoder=from-roles-attribute:add(attribute=Roles)
-end-if
-
 batch
 
 # Configure LDAP realm
 /subsystem=elytron/dir-context=exampleDC:add(url="ldap://172.17.0.2:389",principal="cn=admin,dc=wildfly,dc=org",credential-reference={clear-text="admin"})
 /subsystem=elytron/ldap-realm=exampleLdapRealm:add(dir-context=exampleDC,identity-mapping={search-base-dn="ou=Users,dc=wildfly,dc=org",rdn-identifier="uid",user-password-mapper={from="userPassword"},attribute-mapping=[{filter-base-dn="ou=Roles,dc=wildfly,dc=org",filter="(&(objectClass=groupOfNames)(member={1}))",from="cn",to="Roles"}]})
- 
+
 # Add filesystem realm with user frank with roles Admin
 /subsystem=elytron/filesystem-realm=exampleFSRealm:add(path=demofs-realm-users,relative-to=jboss.server.config.dir)
 /subsystem=elytron/filesystem-realm=exampleFSRealm:add-identity(identity=frank)
@@ -17,11 +13,12 @@ batch
 # Add failover-realm with exampleLdapRealm as delegate and exampleFSRealm as failover filesystem realm. When exampleLdapRealm is unavailable, the request will be moved to exampleFSRealm
 /subsystem=elytron/failover-realm=failoverRealm:add(delegate-realm=exampleLdapRealm,failover-realm=exampleFSRealm)
 
-# Add security domain failoverSD that uses failoverRealm and from-roles-attribute role decoder
-/subsystem=elytron/security-domain=failoverSD:add(default-realm=failoverRealm,permission-mapper=default-permission-mapper,realms=[{realm=failoverRealm,role-decoder="from-roles-attribute"}])
- 
- # Configure HTTP authentication factory to use failoverSD and BASIC auth mechanism and configure undertow to use this http authentication factory
+# Add security domain failoverSD that uses failoverRealm
+/subsystem=elytron/security-domain=failoverSD:add(default-realm=failoverRealm,permission-mapper=default-permission-mapper,realms=[{realm=failoverRealm}])
+
+ # Configure HTTP authentication factory to use failoverSD and BASIC auth mechanism and configure Undertow to use this http authentication factory
 /subsystem=elytron/http-authentication-factory=example-failover-http-auth:add(http-server-mechanism-factory="global",mechanism-configurations=[{mechanism-name="BASIC",mechanism-realm-configurations=[{realm-name="RealmUsersRoles"}]}],security-domain=failoverSD)
 /subsystem=undertow/application-security-domain=httpSD:add(http-authentication-factory=example-failover-http-auth)
- 
+
 run-batch
+reload

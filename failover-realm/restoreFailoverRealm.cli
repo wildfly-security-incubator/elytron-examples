@@ -1,0 +1,27 @@
+batch
+
+# Remove Undertow application security domain and HTTP authentication factory
+/subsystem=undertow/application-security-domain=httpSD:remove()
+/subsystem=elytron/http-authentication-factory=example-failover-http-auth:remove()
+
+# Remove failoverSD security domain and failover-realm security realm
+/subsystem=elytron/security-domain=failoverSD:remove()
+/subsystem=elytron/failover-realm=failoverRealm:remove()
+
+# Remove user frank from filesystem realm
+/subsystem=elytron/filesystem-realm=exampleFSRealm:remove-identity(identity=frank)
+
+# Run commands, reload server, and start batching commands again
+run-batch
+reload
+batch
+
+# Remove filesystem realm
+/subsystem=elytron/filesystem-realm=exampleFSRealm:remove()
+
+# Remove LDAP realm and configuration
+/subsystem=elytron/ldap-realm=exampleLdapRealm:remove()
+/subsystem=elytron/dir-context=exampleDC:remove()
+
+# Run batched commands
+run-batch

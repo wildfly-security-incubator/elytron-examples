@@ -7,32 +7,53 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <version.org.wildfly.wildfly-ejb-client-bom>20.0.0.Final</version.org.wildfly.wildfly-ejb-client-bom>
-        <version.org.wildfly.security.wildfly-elytron>1.19.0.Final</version.org.wildfly.security.wildfly-elytron>
-        <version.org.jboss.spec.javax.annotation.jboss-annotations-api_1.3._spec>2.0.1.Final</version.org.jboss.spec.javax.annotation.jboss-annotations-api_1.3._spec>
         <version.org.wildfly.plugins.wildfly-maven-plugins>2.0.2.Final</version.org.wildfly.plugins.wildfly-maven-plugins>
         <version.org.apache.maven.plugins.maven-ejb-plugins>3.2</version.org.apache.maven.plugins.maven-ejb-plugins>
+        <version.wildfly>27.0.1.Final</version.wildfly>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.wildfly.bom</groupId>
+                <artifactId>wildfly-ee-with-tools</artifactId>
+                <scope>import</scope>
+                <type>pom</type>
+                <version>${version.wildfly}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
             <groupId>org.wildfly</groupId>
             <artifactId>wildfly-ejb-client-bom</artifactId>
-            <version>${version.org.wildfly.wildfly-ejb-client-bom}</version>
             <type>pom</type>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.wildfly.security</groupId>
             <artifactId>wildfly-elytron</artifactId>
-            <version>${version.org.wildfly.security.wildfly-elytron}</version>
         </dependency>
         <dependency>
-            <groupId>org.jboss.spec.javax.annotation</groupId>
-            <artifactId>jboss-annotations-api_1.3_spec</artifactId>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
             <scope>provided</scope>
-            <version>${version.org.jboss.spec.javax.annotation.jboss-annotations-api_1.3._spec}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/jakarta.platform/jakarta.jakartaee-api -->
+        <dependency>
+            <groupId>jakarta.platform</groupId>
+            <artifactId>jakarta.jakartaee-api</artifactId>
+            <version>10.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api -->
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
     <build>

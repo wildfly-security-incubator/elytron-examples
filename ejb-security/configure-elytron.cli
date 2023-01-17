@@ -22,16 +22,13 @@ batch
 /subsystem=elytron/security-domain=fsSD:add(realms=[{realm=fsRealm, role-decoder=from-roles-attribute}], default-realm=fsRealm,permission-mapper=default-permission-mapper)
 
 # Add the filesystem security domain mapping in the EJB3 subsystem
-/subsystem=ejb3/application-security-domain=other:add(security-domain=fsSD)
+/subsystem=ejb3/application-security-domain=other:write-attribute(name=security-domain,value=fsSD)
 
 # Update the sasl-authentication-factory to use the fsSD security domain
 /subsystem=elytron/sasl-authentication-factory=application-sasl-authentication:write-attribute(name=security-domain, value=fsSD)
 
 # Update the sasl-authentication-factory to use SCRAM-SHA-512
 /subsystem=elytron/sasl-authentication-factory=application-sasl-authentication:list-add(name=mechanism-configurations, value={mechanism-name=SCRAM-SHA-512})
-
-# Update the http-remoting-connector to use the application-sasl-authentication factory
-/subsystem=remoting/http-connector=http-remoting-connector:write-attribute(name=sasl-authentication-factory,value=application-sasl-authentication)
 
 # Run the batch commands
 run-batch

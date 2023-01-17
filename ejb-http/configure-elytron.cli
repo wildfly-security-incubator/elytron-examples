@@ -16,7 +16,7 @@ batch
 /subsystem=elytron/filesystem-realm=fsRealm:add-identity-attribute(identity=quickstartUser, name=Roles, value=[guest])
 
 # Configure the security domain using the filesystem realm
-/subsystem=elytron/security-domain=fsSD:add(realms=[{realm=fsRealm, role-decoder=from-roles-attribute}], default-realm=fsRealm,permission-mapper=default-permission-mapper)
+/subsystem=elytron/security-domain=fsSD:add(realms=[{realm=fsRealm}], default-realm=fsRealm,permission-mapper=default-permission-mapper)
 
 # Configure the http-authentication-factory
 /subsystem=elytron/http-authentication-factory=example-http-auth:add(http-server-mechanism-factory=global,security-domain=fsSD,mechanism-configurations=[{mechanism-name=BASIC,mechanism-realm-configurations=[{realm-name=fsRealm}]}])

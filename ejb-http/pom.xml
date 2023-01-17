@@ -5,10 +5,12 @@
     <version>2.0.0.Alpha1-SNAPSHOT</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
 
-        <version.org.apache.maven.plugins.maven-ejb-plugins>3.2</version.org.apache.maven.plugins.maven-ejb-plugins>
+        <version.org.apache.maven.plugins.maven-ejb-plugins>3.2.1</version.org.apache.maven.plugins.maven-ejb-plugins>
+        <version.org.codehaus.mojo.exec-maven-plugin>3.1.0</version.org.codehaus.mojo.exec-maven-plugin>
+        <version.org.wildfly.plugins.wildfly-maven-plugin>4.0.0.Final</version.org.wildfly.plugins.wildfly-maven-plugin>
 
         <version.wildfly>27.0.1.Final</version.wildfly>
     </properties>
@@ -57,10 +59,12 @@
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
+                <version>${version.org.wildfly.plugins.wildfly-maven-plugin}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-ejb-plugin</artifactId>
+                <version>${version.org.apache.maven.plugins.maven-ejb-plugins}</version>
                 <configuration>
                     <ejbVersion>${version.org.apache.maven.plugins.maven-ejb-plugins}</ejbVersion>
                     <generateClient>true</generateClient>
@@ -70,6 +74,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
+                <version>${version.org.codehaus.mojo.exec-maven-plugin}</version>
                 <configuration>
                     <executable>java</executable>
                     <workingDirectory>${project.build.directory}/exec-working-directory</workingDirectory>
@@ -77,7 +82,7 @@
                         <!-- automatically creates the classpath using all project dependencies,
                                       also adding the project build directory -->
                         <argument>-classpath</argument>
-                        <classpath></classpath>
+                        <classpath/>
                         <argument>org.wildfly.security.examples.RemoteClient</argument>
                     </arguments>
                 </configuration>

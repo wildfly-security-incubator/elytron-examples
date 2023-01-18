@@ -27,11 +27,21 @@
     <name>failover-realm-demo</name>
     <description>Example of failover realm in elytron subsystem</description>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+
+        <version.maven-war-plugin>3.3.2</version.maven-war-plugin>
+        <version.org.wildfly.plugins.wildfly-maven-plugin>4.0.0.Final</version.org.wildfly.plugins.wildfly-maven-plugin>
+        <version.server.bom>27.0.1.Final</version.server.bom>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.wildfly.bom</groupId>
-                <artifactId>wildfly-jakartaee8-with-tools</artifactId>
+                <artifactId>wildfly-ee-with-tools</artifactId>
                 <version>${version.server.bom}</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -40,18 +50,8 @@
     </dependencyManagement>
     <dependencies>
         <dependency>
-            <groupId>jakarta.enterprise</groupId>
-            <artifactId>jakarta.enterprise.cdi-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.spec.javax.annotation</groupId>
-            <artifactId>jboss-annotations-api_1.3_spec</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.spec.javax.servlet</groupId>
-            <artifactId>jboss-servlet-api_4.0_spec</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -61,22 +61,16 @@
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
-                <version>2.0.0.Final</version>
+                <version>${version.org.wildfly.plugins.wildfly-maven-plugin}</version>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.4</version>
+                <version>${version.maven-war-plugin}</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
-    <properties>
-        <version.jboss.spec.javaee.7.0>1.1.1.Final</version.jboss.spec.javaee.7.0>
-        <version.server.bom>24.0.0.Final</version.server.bom>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
 </project>

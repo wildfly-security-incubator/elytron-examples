@@ -15,9 +15,13 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<web-app version="3.1">
-   <login-config>
-      <auth-method>BASIC</auth-method>
-      <realm-name>distributedRealmsUsers</realm-name>
-   </login-config>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      https://jakarta.ee/xml/ns/jakartaee
+      https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+    version="6.0">
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>distributedRealmsUsers</realm-name>
+    </login-config>
 </web-app>

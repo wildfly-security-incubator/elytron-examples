@@ -20,13 +20,14 @@ Please take a look at the `configureFailoverRealm.cli` file located in this fold
 ## Usage
 
 Run wildfly server and then move to source folder of this example. To configure server you can use:
-```
+
+```bash
 {path_to_wildfly}/bin/jboss-cli.sh --connect --file=configureFailoverRealm.cli
 ```
 
 Compile the secured servlet included in this example and deploy it to the running server:
 
-```
+```bash
 mvn clean install wildfly:deploy
 ```
 
@@ -41,3 +42,16 @@ WARN  [org.wildfly.security] (default task-1) ELY13001: Realm is failing over.: 
 
 This warning message notifies you that the LDAP realm was unavailable and fail over realm was used instead.
 
+## Restoring configuration
+
+Once you are finished with the demo, undeploy the servlet from the running server:
+
+```bash
+mvn wildfly:undeploy
+```
+
+Then, restore the server configuration by running the `restoreFailoverRealm.cli` script:
+
+```bash
+{path_to_wildfly}/bin/jboss-cli.sh --connect --file=restoreFailoverRealm.cli
+```

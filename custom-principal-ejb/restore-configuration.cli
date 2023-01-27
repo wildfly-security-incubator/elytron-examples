@@ -1,0 +1,29 @@
+# Start batching
+batch
+
+# Remove security domain to EJB subsystem, restore Remoting HTTP connector
+/subsystem=remoting/http-connector=http-remoting-connector:write-attribute(name=sasl-authentication-factory,value=application-sasl-authentication)
+/subsystem=ejb3/application-security-domain=principalEJB:remove()
+
+# Remove the SASL authentication factory and security domain
+/subsystem=elytron/sasl-authentication-factory=principalAuthFactory:remove()
+/subsystem=elytron/security-domain=principalSecDomain:remove()
+
+# Remove pre-, post-realm, and final transformers
+/subsystem=elytron/custom-principal-transformer=customFinalRewriter:remove()
+/subsystem=elytron/custom-principal-transformer=customPostRealmRewriter:remove()
+/subsystem=elytron/custom-principal-transformer=customPreRealmTransformer:remove()
+
+# Remove security identity
+/subsystem=elytron/filesystem-realm=principalRealm:remove-identity(identity=customQuickstartUserFinal)
+
+# Run batch
+run-batch
+reload
+
+# Remove security realm and custom components module
+batch
+/subsystem=elytron/filesystem-realm=principalRealm:remove()
+module remove --name=org.wildfly.security.examples.custom-principal-ejb-components
+run-batch
+reload

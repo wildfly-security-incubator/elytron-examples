@@ -1,0 +1,28 @@
+# Load custom components module
+module add --name=org.wildfly.security.examples.custom-principal-elytron-components --resources=/PATH/TO/elytron-examples/custom-principal-elytron/components/target/custom-principal-elytron-components.jar --dependencies=org.wildfly.security.elytron,org.wildfly.extension.elytron
+
+# Start batching
+batch
+
+# Enable a default JACC policy for Elytron
+/subsystem=elytron/policy=jacc:add(jacc-policy={})
+
+# Create security realm and identity
+/subsystem=elytron/filesystem-realm=principalRealm:add(path=principal-realm,relative-to=jboss.server.config.dir)
+/subsystem=elytron/filesystem-realm=principalRealm:add-identity(identity=customQuickstartUserPost)
+/subsystem=elytron/filesystem-realm=principalRealm:set-password(identity=customQuickstartUserPost,clear={password=password123!})
+/subsystem=elytron/filesystem-realm=principalRealm:add-identity-attribute(identity=customQuickstartUserPost,name=Roles,value=[Login])
+
+# Add custom pre-realm principal transformer and post-realm regex rewriter (a type of transformer)
+/subsystem=elytron/custom-principal-transformer=customPreRealmTransformer:add(module=org.wildfly.security.examples.custom-principal-elytron-components,class-name=org.wildfly.security.examples.CustomPreRealmTransformer)
+/subsystem=elytron/custom-principal-transformer=customPostRealmRewriter:add(module=org.wildfly.security.examples.custom-principal-elytron-components,class-name=org.wildfly.security.examples.CustomPostRealmTransformer)
+
+# Create security domain, add realms and transformers
+/subsystem=elytron/security-domain=principalSecDomain:add(realms=[{realm=principalRealm}],default-realm=principalRealm,pre-realm-principal-transformer=customPreRealmTransformer,post-realm-principal-transformer=customPostRealmRewriter,permission-mapper=default-permission-mapper)
+
+# Add the security domain factory mapping to Undertow
+/subsystem=undertow/application-security-domain=other:write-attribute(name=security-domain, value=principalSecDomain)
+
+# Run batch
+run-batch
+reload

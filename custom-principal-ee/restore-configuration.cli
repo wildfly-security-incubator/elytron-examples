@@ -1,0 +1,20 @@
+# Start batching
+batch
+
+# Remove the security domain mapping to Undertow and restore integrated JASPI
+/subsystem=undertow/application-security-domain=other:write-attribute(name=integrated-jaspi,value=true)
+/subsystem=undertow/application-security-domain=other:write-attribute(name=security-domain, value=ApplicationDomain)
+
+# Remove security domain and custom principal transformer
+/subsystem=elytron/security-domain=principalSecDomain:remove()
+
+# Remove default JACC policy for Elytron
+/subsystem=elytron/policy=jacc:remove()
+
+# Run batch
+run-batch
+reload
+
+# Remove custom components module
+module remove --name=org.wildfly.security.examples.custom-principal-ee-components
+reload

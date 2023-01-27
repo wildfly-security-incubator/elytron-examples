@@ -1,0 +1,30 @@
+# Load custom components module
+module add --name=org.wildfly.security.examples.custom-principal-ejb-components --resources=/PATH/TO/elytron-examples/custom-principal-ejb/components/target/custom-principal-ejb-components.jar --dependencies=org.wildfly.security.elytron,org.wildfly.extension.elytron
+
+# Start batching
+batch
+
+# Create security realm and identity
+/subsystem=elytron/filesystem-realm=principalRealm:add(path=principal-realm,relative-to=jboss.server.config.dir)
+/subsystem=elytron/filesystem-realm=principalRealm:add-identity(identity=customQuickstartUserFinal)
+/subsystem=elytron/filesystem-realm=principalRealm:set-password(identity=customQuickstartUserFinal,clear={password=password123!})
+/subsystem=elytron/filesystem-realm=principalRealm:add-identity-attribute(identity=customQuickstartUserFinal,name=Roles,value=[Login])
+
+# Add custom pre-realm principal transformer
+/subsystem=elytron/custom-principal-transformer=customPreRealmTransformer:add(module=org.wildfly.security.examples.custom-principal-ejb-components,class-name=org.wildfly.security.examples.CustomPreRealmTransformer)
+
+# Create custom post-realm and final regex rewriters (a type of transformer)
+/subsystem=elytron/custom-principal-transformer=customPostRealmRewriter:add(module=org.wildfly.security.examples.custom-principal-ejb-components,class-name=org.wildfly.security.examples.CustomPostRealmTransformer)
+/subsystem=elytron/custom-principal-transformer=customFinalRewriter:add(module=org.wildfly.security.examples.custom-principal-ejb-components,class-name=org.wildfly.security.examples.CustomFinalTransformer)
+
+# Create security domain and SASL authentication factory, add realms and transformers
+/subsystem=elytron/security-domain=principalSecDomain:add(realms=[{realm=principalRealm}],default-realm=principalRealm,pre-realm-principal-transformer=customPreRealmTransformer,post-realm-principal-transformer=customPostRealmRewriter,permission-mapper=default-permission-mapper)
+/subsystem=elytron/sasl-authentication-factory=principalAuthFactory:add(sasl-server-factory=configured,security-domain=principalSecDomain,mechanism-configurations=[{mechanism-name=SCRAM-SHA-256,final-principal-transformer=customFinalRewriter}])
+
+# Add security domain to EJB subsystem, update Remoting HTTP connector to use SASL authentication factory
+/subsystem=ejb3/application-security-domain=principalEJB:add(security-domain=principalSecDomain)
+/subsystem=remoting/http-connector=http-remoting-connector:write-attribute(name=sasl-authentication-factory,value=principalAuthFactory)
+
+# Run batch
+run-batch
+reload

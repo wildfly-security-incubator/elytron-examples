@@ -1,0 +1,20 @@
+# Load custom components as a global module
+module add --name=org.wildfly.security.examples.custom-principal-ee-components --resources=/PATH/TO/elytron-examples/custom-principal-ee/components/target/custom-principal-ee-components.jar --dependencies=org.wildfly.security.elytron,org.wildfly.extension.elytron
+reload
+
+# Start batching
+batch
+
+# Enable a default JACC policy for Elytron
+/subsystem=elytron/policy=jacc:add(jacc-policy={})
+
+# Create security domain
+/subsystem=elytron/security-domain=principalSecDomain:add(permission-mapper=default-permission-mapper)
+
+# Add the security domain mapping to Undertow and disable integrated JASPI
+/subsystem=undertow/application-security-domain=other:write-attribute(name=security-domain,value=principalSecDomain)
+/subsystem=undertow/application-security-domain=other:write-attribute(name=integrated-jaspi,value=false)
+
+# Run batch
+run-batch
+reload

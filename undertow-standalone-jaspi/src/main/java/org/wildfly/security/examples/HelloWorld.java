@@ -24,10 +24,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.security.auth.message.config.AuthConfigFactory;
+import jakarta.security.auth.message.config.AuthConfigFactory;
 
 import org.wildfly.elytron.web.undertow.server.servlet.AuthenticationManager;
-import org.wildfly.security.WildFlyElytronProvider;
 import org.wildfly.security.auth.jaspi.ElytronAuthConfigFactory;
 import org.wildfly.security.auth.jaspi.JaspiConfigurationBuilder;
 import org.wildfly.security.auth.permission.LoginPermission;
@@ -40,6 +39,7 @@ import org.wildfly.security.credential.PasswordCredential;
 import org.wildfly.security.examples.jaspi.SimpleServerAuthModule;
 import org.wildfly.security.examples.servlet.SecuredServlet;
 import org.wildfly.security.password.PasswordFactory;
+import org.wildfly.security.password.WildFlyElytronPasswordProvider;
 import org.wildfly.security.password.spec.ClearPasswordSpec;
 import org.wildfly.security.permission.PermissionVerifier;
 
@@ -61,7 +61,7 @@ import io.undertow.servlet.api.WebResourceCollection;
  */
 public class HelloWorld {
 
-    private static final WildFlyElytronProvider elytronProvider = new WildFlyElytronProvider();
+    private static final WildFlyElytronPasswordProvider elytronPasswordProvider = new WildFlyElytronPasswordProvider();
 
     private static final String HOST = "localhost";
     private static final int PORT = 28080;
@@ -119,12 +119,12 @@ public class HelloWorld {
     }
 
     private static SecurityDomain createSecurityDomain() throws Exception {
-        PasswordFactory passwordFactory = PasswordFactory.getInstance(ALGORITHM_CLEAR, elytronProvider);
+        PasswordFactory passwordFactory = PasswordFactory.getInstance(ALGORITHM_CLEAR, elytronPasswordProvider);
 
         Map<String, SimpleRealmEntry> identityMap = new HashMap<>();
         identityMap.put("elytron", new SimpleRealmEntry(Collections.singletonList(new PasswordCredential(passwordFactory.generatePassword(new ClearPasswordSpec("Coleoptera".toCharArray()))))));
 
-        SimpleMapBackedSecurityRealm simpleRealm = new SimpleMapBackedSecurityRealm(() -> new Provider[] { elytronProvider });
+        SimpleMapBackedSecurityRealm simpleRealm = new SimpleMapBackedSecurityRealm(() -> new Provider[] { elytronPasswordProvider });
         simpleRealm.setIdentityMap(identityMap);
 
         SecurityDomain.Builder builder = SecurityDomain.builder()

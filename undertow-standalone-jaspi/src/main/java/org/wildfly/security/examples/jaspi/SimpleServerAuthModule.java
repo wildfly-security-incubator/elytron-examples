@@ -23,15 +23,15 @@ import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
-import javax.security.auth.message.AuthException;
-import javax.security.auth.message.AuthStatus;
-import javax.security.auth.message.MessageInfo;
-import javax.security.auth.message.MessagePolicy;
-import javax.security.auth.message.callback.GroupPrincipalCallback;
-import javax.security.auth.message.callback.PasswordValidationCallback;
-import javax.security.auth.message.module.ServerAuthModule;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.security.auth.message.AuthException;
+import jakarta.security.auth.message.AuthStatus;
+import jakarta.security.auth.message.MessageInfo;
+import jakarta.security.auth.message.MessagePolicy;
+import jakarta.security.auth.message.callback.GroupPrincipalCallback;
+import jakarta.security.auth.message.callback.PasswordValidationCallback;
+import jakarta.security.auth.message.module.ServerAuthModule;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * A simple {@link ServerAuthModule} implementation.
@@ -52,7 +52,7 @@ public class SimpleServerAuthModule implements ServerAuthModule {
         this.callbackHandler = handle("handler", handler);
     }
 
-    public Class[] getSupportedMessageTypes() {
+    public Class<?>[] getSupportedMessageTypes() {
         System.out.println("SimpleServerAuthModule getSupportedMessageTypes");
         return new Class[] { HttpServletRequest.class, HttpServletResponse.class };
     }

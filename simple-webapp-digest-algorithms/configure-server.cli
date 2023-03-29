@@ -1,0 +1,18 @@
+/subsystem=elytron/filesystem-realm=exampleFsRealm:add(path=fs-realm-users,relative-to=jboss.server.config.dir)
+
+# Add user  to this filesystem realm
+/subsystem=elytron/filesystem-realm=exampleFsRealm:add-identity(identity=user)
+
+# Add attributes to user . The attributes consists of Role (User) and some personal information.
+/subsystem=elytron/filesystem-realm=exampleFsRealm:set-password(clear={password="passwordUser"}, identity=user)
+
+/subsystem=elytron/filesystem-realm=exampleFsRealm:add-identity-attribute(identity=user, name=Roles, value=["Users"])
+
+# Add security domain that uses the above
+/subsystem=elytron/security-domain=exampleFsSD:add(realms=[{realm=exampleFsRealm}],default-realm=exampleFsRealm,permission-mapper=default-permission-mapper)
+
+# Set HTTP DIGEST-SHA256 and HTTP DIGEST-SHA-512-256 authentication mechanisms for this security domain
+/subsystem=elytron/http-authentication-factory=example-fs-http-auth:add(http-server-mechanism-factory=global,security-domain=exampleFsSD,mechanism-configurations=[{mechanism-name=DIGEST-SHA-256,mechanism-realm-configurations=[{realm-name=exampleApplicationDomain}]},{mechanism-name=DIGEST-SHA-512-256,mechanism-realm-configurations=[{realm-name=exampleApplicationDomain}]}]
+
+# Add exampleApplicationDomain in undertow and set it to use exampleFsSD security domain created above
+/subsystem=undertow/application-security-domain=exampleApplicationDomain:add(http-authentication-factory=example-fs-http-auth)

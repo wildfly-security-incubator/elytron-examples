@@ -4,9 +4,6 @@ module add --name=org.wildfly.security.examples.custom-principal-elytron-compone
 # Start batching
 batch
 
-# Enable a default JACC policy for Elytron
-/subsystem=elytron/policy=jacc:add(jacc-policy={})
-
 # Create security realm and identity
 /subsystem=elytron/filesystem-realm=principalRealm:add(path=principal-realm,relative-to=jboss.server.config.dir)
 /subsystem=elytron/filesystem-realm=principalRealm:add-identity(identity=customQuickstartUserPost)

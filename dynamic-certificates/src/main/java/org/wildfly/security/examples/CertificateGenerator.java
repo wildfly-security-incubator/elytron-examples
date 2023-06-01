@@ -37,6 +37,7 @@ import java.util.List;
 import javax.security.auth.x500.X500Principal;
 
 import org.wildfly.security.x500.GeneralName;
+import org.wildfly.security.x500.cert.BasicConstraintsExtension;
 import org.wildfly.security.x500.cert.SelfSignedX509CertificateAndSigningKey;
 import org.wildfly.security.x500.cert.SubjectAlternativeNamesExtension;
 import org.wildfly.security.x500.cert.X509CertificateBuilder;
@@ -528,6 +529,7 @@ public class CertificateGenerator {
      */
     public SelfSignedX509CertificateAndSigningKey createAuthority() {
         return SelfSignedX509CertificateAndSigningKey.builder()
+                .addExtension(false, "BasicConstraints", "CA:true,pathlen:2147483647")
                 .setDn(new X500Principal(authorityDN))
                 .setKeyAlgorithmName(keyAlg)
                 .setSignatureAlgorithmName(sigAlg)
@@ -750,6 +752,7 @@ public class CertificateGenerator {
                 .setSignatureAlgorithmName(sigAlg)
                 .setSigningKey(issuerSelfSignedX509CertificateAndSigningKey.getSigningKey())
                 .setPublicKey(publicKey)
+                .addExtension(new BasicConstraintsExtension(false, false, -1))
                 .setSerialNumber(serialNumberValue);
         if (generalName != null) {
             builder.addExtension(new SubjectAlternativeNamesExtension(true, Arrays.asList(generalName)));

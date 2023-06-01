@@ -1,0 +1,31 @@
+# Restore the undertow subsystem
+batch
+/subsystem=undertow/application-security-domain=other:write-attribute(name=security-domain,value=ApplicationDomain)
+/subsystem=undertow/application-security-domain=other:undefine-attribute(name=http-authentication-factory)
+/subsystem=undertow/application-security-domain=other:write-attribute(name=override-deployment-config,value=false)
+run-batch
+
+# Remove the CLIENT_CERT HTTP mechanism
+/subsystem=elytron/configurable-http-server-mechanism-factory=configuredCert:add(http-server-mechanism-factory=global, properties={org.wildfly.security.http.skip-certificate-verification=true})
+/subsystem=elytron/http-authentication-factory=clientCertAuth:add(http-server-mechanism-factory=configuredCert, security-domain=clientCertDomain, mechanism-configurations=[{mechanism-name=CLIENT_CERT}])
+
+# Restore the SSL configuration
+security disable-ssl-http-server # TODO: check this command
+/subsystem=elytron/key-store=serverTS:remove
+
+# Remove the security domain
+/subsystem=elytron/security-domain=clientCertDomain:remove
+
+# Remove the security realm and the identities within it
+/subsystem=elytron/filesystem-realm=idsRealm:remove-identity(identity=456789)
+/subsystem=elytron/filesystem-realm=idsRealm:remove-identity(identity=123456)
+/subsystem=elytron/filesystem-realm=idsRealm:remove
+
+# Remove the chained principal transformer
+/subsystem=elytron/chained-principal-transformer=myChainedTransformer:remove
+
+# Remove the transformer for matching the ID portion from the CN value
+/subsystem=elytron/regex-principal-transformer=myRegexTransformer:remove
+
+# Remove the X.509 certificate subject name decoder
+/subsystem=elytron/x500-attribute-principal-decoder=cnDecoder:remove

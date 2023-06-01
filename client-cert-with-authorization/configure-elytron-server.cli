@@ -9,21 +9,25 @@
 
 # Create a security realm with two identities, 123456 and 456789
 /subsystem=elytron/filesystem-realm=idsRealm:add(path=ids,relative-to=jboss.server.config.dir)
-/subsystem=elytron/filesystem-realm=idsRealm:add-identity(identity=123456)
 /subsystem=elytron/filesystem-realm=idsRealm:add-identity-attribute(identity=123456,name=Roles,value=[Users])
-/subsystem=elytron/filesystem-realm=idsRealm:add-identity(identity=456789)
 
 # Configure a security domain that references our security realm
 /subsystem=elytron/security-domain=clientCertDomain:add(realms=[{realm=idsRealm}], default-realm=idsRealm, pre-realm-principal-transformer=myChainedTransformer, permission-mapper=default-permission-mapper)
 
 # Configure two-way SSL
 /subsystem=elytron/key-store=serverTS:add(path=server.truststore,relative-to=jboss.server.config.dir,credential-reference={clear-text=truststorepass},type=JKS)
-security enable-ssl-http-server --key-store-path=server.keystore --key-store-path-relative-to=jboss.server.config.dir --key-store-password=keystorepass --trust-store-name=serverTS
+security enable-ssl-http-server --key-store-path=server.keystore --key-store-path-relative-to=jboss.server.config.dir --key-store-password=keystorepass --trust-store-name=serverTS --override-ssl-context
 
 # Configure the CLIENT_CERT HTTP mechanism
 /subsystem=elytron/configurable-http-server-mechanism-factory=configuredCert:add(http-server-mechanism-factory=global, properties={org.wildfly.security.http.skip-certificate-verification=true})
 /subsystem=elytron/http-authentication-factory=clientCertAuth:add(http-server-mechanism-factory=configuredCert, security-domain=clientCertDomain, mechanism-configurations=[{mechanism-name=CLIENT_CERT}])
-/subsystem=undertow/application-security-domain=other:add(http-authentication-factory=clientCertAuth,override-deployment-config=true)
+
+batch
+#configure the undertow subsystem	
+/subsystem=undertow/application-security-domain=other:undefine-attribute(name=security-domain)
+/subsystem=undertow/application-security-domain=other:write-attribute(name=http-authentication-factory,value=clientCertAuth)
+/subsystem=undertow/application-security-domain=other:write-attribute(name=override-deployment-config,value=true)
+run-batch
 
 # Reload the server instance
 reload

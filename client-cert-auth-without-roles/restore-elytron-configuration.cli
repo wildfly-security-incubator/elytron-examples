@@ -1,0 +1,41 @@
+# Batch script to restore the configuration back to default 
+batch
+
+#Undo undertow subsystem configuration 
+/subsystem=undertow/application-security-domain=other:undefine-attribute(name=override-deployment-config)
+/subsystem=undertow/application-security-domain=other:undefine-attribute(name=http-authentication-factory)
+/subsystem=undertow/application-security-domain=other:write-attribute(name=security-domain, value=ApplicationDomain)
+run-batch
+
+# remove the security domain we created and undo the HTTP configurations
+/subsystem=elytron/http-authentication-factory=clientCertAuth:remove()
+/subsystem=elytron/security-domain=clientCertDomain:remove()
+/subsystem=elytron/configurable-http-server-mechanism-factory=configuredCert:remove()
+/subsystem=undertow/server=default-server/https-listener=https:write-attribute(name=ssl-context, value=applicationSSC)
+
+# restore the Server ssl context to default values
+/subsystem=elytron/server-ssl-context=applicationSSC:write-attribute(name=key-manager, value=applicationKM)
+/subsystem=elytron/server-ssl-context=applicationSSC:undefine-attribute(name=trust-manager)
+/subsystem=elytron/server-ssl-context=applicationSSC:undefine-attribute(name=need-client-auth)
+/subsystem=elytron/server-ssl-context=applicationSSC:undefine-attribute(name=want-client-auth)
+
+#remove the idsRealm configured 
+/subsystem=elytron/filesystem-realm=idsRealm:remove-identity(identity=client-cert-user)
+/subsystem=elytron/filesystem-realm=idsRealm:remove()
+
+# restore the trust manager configuration
+/subsystem=elytron/trust-manager=twoWayTM:remove()
+
+# restore the key manager configuration
+/subsystem=elytron/key-manager=twoWayKM:remove()
+
+# restore the key store realm configurations
+/subsystem=elytron/key-store=twoWayTS:remove()
+/subsystem=elytron/key-store=twoWayKS:remove()
+
+# remove the CN decoder we used to decode the certificates
+/subsystem=elytron/chained-principal-transformer=myChainedTransformer:remove()
+/subsystem=elytron/regex-principal-transformer=myRegexTransformer:remove()
+/subsystem=elytron/x500-attribute-principal-decoder=cnDecoder:remove()
+
+reload

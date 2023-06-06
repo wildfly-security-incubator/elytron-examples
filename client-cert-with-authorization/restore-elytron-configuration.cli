@@ -1,0 +1,37 @@
+# Restore the undertow subsystem
+batch
+
+#Undo undertow subsystem configuration 
+/subsystem=undertow/application-security-domain=other:undefine-attribute(name=override-deployment-config)
+/subsystem=undertow/application-security-domain=other:undefine-attribute(name=http-authentication-factory)
+/subsystem=undertow/application-security-domain=other:write-attribute(name=security-domain, value=ApplicationDomain)
+run-batch
+
+# Remove the CLIENT_CERT HTTP mechanism
+/subsystem=elytron/http-authentication-factory=clientCertAuth:remove
+/subsystem=elytron/configurable-http-server-mechanism-factory=configuredCert:remove
+
+# Restore the SSL configuration
+security disable-ssl-http-server 
+/subsystem=elytron/server-ssl-context=ssl-context-server.keystore.pkcs12:remove
+/subsystem=elytron/key-manager=key-manager-server.keystore.pkcs12:remove
+/subsystem=elytron/key-store=server.keystore.pkcs12:remove
+/subsystem=elytron/trust-manager=key-manager-serverTS:remove
+/subsystem=elytron/key-store=serverTS:remove
+
+# Remove the security domain
+/subsystem=elytron/security-domain=clientCertDomain:remove
+
+# Remove the security realm and the identities within it
+/subsystem=elytron/filesystem-realm=idsRealm:remove-identity(identity=456789)
+/subsystem=elytron/filesystem-realm=idsRealm:remove-identity(identity=123456)
+/subsystem=elytron/filesystem-realm=idsRealm:remove
+
+# Remove the chained principal transformer
+/subsystem=elytron/chained-principal-transformer=myChainedTransformer:remove
+
+# Remove the transformer for matching the ID portion from the CN value
+/subsystem=elytron/regex-principal-transformer=myRegexTransformer:remove
+
+# Remove the X.509 certificate subject name decoder
+/subsystem=elytron/x500-attribute-principal-decoder=cnDecoder:remove

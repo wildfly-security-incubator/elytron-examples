@@ -33,31 +33,24 @@ a server and two clients:
 The above command generates the following keystores and truststores in the ```dynamic-certificates/target``` directory:
 
 ```
-   client1.keystore
-   client1.truststore
-   client2.keystore
-   client2.truststore
-   server.keystore
-   server.truststore
+   client1.keystore.pkcs12
+   client1.truststore.pkcs12
+   client2.keystore.pkcs12
+   client2.truststore.pkcs12
+   server.keystore.pkcs12
+   server.truststore.pkcs12
 ```
 
-* ```client1.keystore``` contains a certificate with distinguished name: ```CN=Bob.Smith.123456```
-* ```client2.keystore``` contains a certificate with distinguished name: ```CN=Alice.Smith.456789```
+* ```client1.keystore.pkcs12``` contains a certificate with distinguished name: ```CN=Bob.Smith.123456```
+* ```client2.keystore.pkcs12``` contains a certificate with distinguished name: ```CN=Alice.Smith.456789```
 * Both client certificates are issued by an example certificate authority with distinguished name: ```CN=Elytron CA, ST=Elytron, C=UK, EMAILADDRESS=elytron@wildfly.org, O=Root Certificate Authority```
-* ```server.truststore``` contains this certificate authority's certificate
+* ```server.truststore.pkcs12``` contains this certificate authority's certificate
 
-Next, convert the client keystores into PKCS12 format and import them into your browser so you can pick which one to
-present to the server later on:
-
-```
-keytool -importkeystore -srckeystore client1.keystore -srcstoretype jks -destkeystore client1.keystore.pkcs12 -deststoretype pkcs12 -srcstorepass keystorepass -deststorepass keystorepass
-keytool -importkeystore -srckeystore client2.keystore -srcstoretype jks -destkeystore client2.keystore.pkcs12 -deststoretype pkcs12 -srcstorepass keystorepass -deststorepass keystorepass
-```
-
-Finally, copy the server.keystore and server.truststore files to your WildFly server instance:
+Finally, copy the server.keystore.pkcs12 and server.truststore.pkcs12 files to your WildFly server instance:
 
 ```
 cp $PATH_TO_ELYTRON_EXAMPLES/dynamic-certificates/target/server.* $WILDFLY_HOME/standalone/configuration
+cp $PATH_TO_ELYTRON_EXAMPLES/dynamic-certificates/target/client* $WILDFLY_HOME/standalone/configuration
 ```
 
 <a name="serverConfiguration"></a>
@@ -84,18 +77,53 @@ cd $PATH_TO_ELYTRON_EXAMPLES/simple-webapp
 mvn clean install wildfly:deploy
 ```
 
-Then try accessing the application using https://localhost:8443/simple-webapp
+### Import the Certificate into Your Browser
 
-Note that since the server's certificate won't be trusted by your browser, you'll need to manually confirm that
-this certificate is trusted or configure your browser to trust it.
+Before you access the application, you must import the _client1.keystore.pkcs12_, which holds the client certificate, into your browser.
 
-First, select the certificate with for Alice.Smith.456789. Then try clicking on “Access Secured Servlet”. Notice that a
-Forbidden message occurs. This is because accessing the secured servlet requires “Users” role but the “456789” identity
+### Import the Certificate into Google Chrome
+
+ - Click the Chrome menu icon (3 dots) in the upper right on the browser toolbar and choose *Settings*. This takes you to link:`chrome://settings/`.
+
+- Click on *Privacy and security* and then on *Security*.
+
+- Scroll down to the *Advanced* section and on the *Manage certificates* screen, select the *Your Certificates* tab and click on the *Import* button.
+
+- Select the *client1.keystore.pkcs12* file. You will be prompted to enter the password: `keystorepass`.
+
+- The client certificate is now installed in the Google Chrome browser.
+
+You can follow the same instructions to import `client2.keystore.pkcs12` into your browser.
+
+### Import the Certificate into Mozilla Firefox
+
+- Click the *Edit* menu item on the browser menu and choose *Settings*.
+
+- A new window will open. Click on *Privacy & Security* and scroll down to the *Certificates* section.
+
+- Click the *View Certificates* button.
+
+- A new window will open. Select the *Your Certificates* tab and click the *Import* button.
+
+- Select the *client1.keystore.pkcs12* file. You will be prompted to enter the password: `keystorepass`.
+
+- The certificate is now installed in the Mozilla Firefox browser.
+
+You can follow the same instructions to import `client2.keystore.pkcs12` into your browser. Now try accessing the application using https://localhost:8443/simple-webapp
+
+Note that since the server's certificate won't be trusted by your browser, you'll need to manually confirm that this certificate is trusted or configure your browser to trust it.
+
+First, select the certificate with for Alice.Smith.456789. Then try clicking on “Access Secured Servlet”. Notice that a Forbidden message occurs. This is because accessing the secured servlet requires “Users” role but the “456789” identity
 that we configured has no roles.
 
 Now, try accessing the application again. This time, select the certificate for Bob.Smith.123456 and then click on
 “Access Secured Servlet”. This time, this succeeds since the “123456” identity that we configured has “Users” role.
 
+Once you are ready to restore your server back to what it was, please enter the following on your terminal: 
+```
+$SERVER_HOME/bin/jboss-cli.sh --connect --file=$PATH_TO_ELYTRON_EXAMPLES/client-cert-with-authorization/restore-elytron-configuration.cli
+```
+ 
 This example has shown to secure a web application deployed to WildFly using the CLIENT_CERT HTTP authentication
 mechanism with two-way SSL with authorization. It has also demonstrated that individual client certificates do not need
 to be stored in either the server’s truststore or in its security realm.

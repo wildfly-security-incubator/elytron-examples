@@ -66,7 +66,7 @@ cp $PATH_TO_ELYTRON_EXAMPLES/dynamic-certificates/target/server.* $WILDFLY_HOME/
 <a  name="serverConfiguration"></a>
 
 ### Server Configuration
-The following set of instructions are going to be used to configure the Wildfly server in order to establish the mutual TLS connection. We will be deploying a simple web application under the `elytron-examples/client-cert-auth-without-roles/simple-webapp` folder.
+The following set of instructions are going to be used to configure the WildFly server in order to establish the mutual TLS connection. We will be deploying a simple web application under the `elytron-examples/client-cert-auth-without-roles/simple-webapp` folder.
 
 Please navigate to the elytron server home directory and enter the following command.
 ```

@@ -8,6 +8,10 @@
 /subsystem=elytron/chained-principal-transformer=myChainedTransformer:add(principal-transformers=[cnDecoder, myRegexTransformer])
 
 # Create a security realm with two identities, 123456 and 456789
+/subsystem=elytron/filesystem-realm=idsRealm:add(path=ids, relative-to=jboss.server.config.dir)
+/subsystem=elytron/filesystem-realm=idsRealm:add-identity(identity=123456)
+/subsystem=elytron/filesystem-realm=idsRealm:add-identity(identity=456789)
+
 /subsystem=elytron/filesystem-realm=idsRealm:add(path=ids,relative-to=jboss.server.config.dir)
 /subsystem=elytron/filesystem-realm=idsRealm:add-identity-attribute(identity=123456,name=Roles,value=[Users])
 

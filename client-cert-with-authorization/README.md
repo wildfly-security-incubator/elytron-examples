@@ -96,7 +96,7 @@ that we configured has no roles.
 Now, try accessing the application again. This time, select the certificate for Bob.Smith.123456 and then click on
 “Access Secured Servlet”. This time, this succeeds since the “123456” identity that we configured has “Users” role.
 
-Once you are ready to restore your server back to what it was, please enter the following on you terminal: 
+Once you are ready to restore your server back to what it was, please enter the following on your terminal: 
 ```
 $SERVER_HOME/bin/jboss-cli.sh --connect --file=$PATH_TO_ELYTRON_EXAMPLES/client-cert-with-authorization/restore-elytron-configuration.cli
 ```

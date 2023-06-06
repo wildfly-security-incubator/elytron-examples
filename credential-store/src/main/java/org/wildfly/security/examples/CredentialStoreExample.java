@@ -74,6 +74,7 @@ public class CredentialStoreExample {
 
         // PublicKey
         credentialStore.store("publicKey", new PublicKeyCredential(keyPair.getPublic()));
+        credentialStore.flush();
     }
 
     private static void retrieveCredentials(final CredentialStore credentialStore) throws Exception {

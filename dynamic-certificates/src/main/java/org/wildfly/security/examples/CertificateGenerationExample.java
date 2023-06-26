@@ -134,9 +134,9 @@ public class CertificateGenerationExample {
         generator.setTrustStorePassword("custom_password_truststore".toCharArray());
         generator.setAuthorityAlias("CA_Custom");
         generator.setAuthorityDN("CN=CA_Custom");
-        generator.setKeyStoreType("JKS");
-        generator.setKeyStoreName("custom_keystore.jks");
-        generator.setTrustStoreName("custom_truststore.jks");
+        generator.setKeyStoreType("pkcs12");
+        generator.setKeyStoreName("custom_keystore.pkcs12");
+        generator.setTrustStoreName("custom_truststore.pkcs12");
         generator.setKeySize(1024);
     }
 

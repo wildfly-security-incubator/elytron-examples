@@ -37,6 +37,7 @@ import java.util.List;
 import javax.security.auth.x500.X500Principal;
 
 import org.wildfly.security.x500.GeneralName;
+import org.wildfly.security.x500.cert.BasicConstraintsExtension;
 import org.wildfly.security.x500.cert.SelfSignedX509CertificateAndSigningKey;
 import org.wildfly.security.x500.cert.SubjectAlternativeNamesExtension;
 import org.wildfly.security.x500.cert.X509CertificateBuilder;
@@ -68,9 +69,9 @@ public class CertificateGenerator {
     private String outputLocation;
     private String authorityAlias = "CA";
     private String authorityDN = "CN=Elytron CA, ST=Elytron, C=UK, EMAILADDRESS=elytron@wildfly.org, O=Root Certificate Authority";
-    private String keyStoreType = KEYSTORE_TYPES_JKS;
-    private String keyStoreName = "keystore.jks";
-    private String trustStoreName = "truststore.jks";
+    private String keyStoreType = KEYSTORE_TYPES_PKCS12;
+    private String keyStoreName = "keystore.p12";
+    private String trustStoreName = "truststore.p12";
     private int keySize = KEY_SIZES_2048;
     private ArrayList<String> aliases;
     private ArrayList<String> distinguishedNames;
@@ -481,15 +482,15 @@ public class CertificateGenerator {
         if (subjectAltNamesSpecified) {
             addSubjectAltName(subjectAltNames.get(0));
         }
-        setTrustStoreName("server.truststore");
-        setKeyStoreName("client1.keystore");
+        setTrustStoreName("server.truststore.pkcs12");
+        setKeyStoreName("client1.keystore.pkcs12");
         SelfSignedX509CertificateAndSigningKey authority = createAuthority();
 
         List<X509Certificate> certificates = createSignedCertificates(authority);
         createKeyStoreAndTrustStore(authority, certificates);
         saveKeyStoreToFile();
 
-        setKeyStoreName("client2.keystore");
+        setKeyStoreName("client2.keystore.pkcs12");
         clearAliases();
         clearDistinguishedNames();
         clearSubjectAltNames();
@@ -502,7 +503,7 @@ public class CertificateGenerator {
         createKeyStoreAndTrustStore(authority, certificates);
         saveKeyStoreToFile();
 
-        setKeyStoreName("server.keystore");
+        setKeyStoreName("server.keystore.pkcs12");
         clearAliases();
         clearDistinguishedNames();
         if (subjectAltNamesSpecified) {
@@ -514,10 +515,10 @@ public class CertificateGenerator {
         createKeyStore(authority.getSelfSignedCertificate(), certificates);
         saveKeyStoreAndTrustStoreToFile();
 
-        setTrustStoreName("client1.truststore");
+        setTrustStoreName("client1.truststore.pkcs12");
         saveTrustStoreToFile();
 
-        setTrustStoreName("client2.truststore");
+        setTrustStoreName("client2.truststore.pkcs12");
         saveTrustStoreToFile();
     }
 
@@ -528,6 +529,7 @@ public class CertificateGenerator {
      */
     public SelfSignedX509CertificateAndSigningKey createAuthority() {
         return SelfSignedX509CertificateAndSigningKey.builder()
+                .addExtension(false, "BasicConstraints", "CA:true,pathlen:2147483647")
                 .setDn(new X500Principal(authorityDN))
                 .setKeyAlgorithmName(keyAlg)
                 .setSignatureAlgorithmName(sigAlg)
@@ -750,6 +752,7 @@ public class CertificateGenerator {
                 .setSignatureAlgorithmName(sigAlg)
                 .setSigningKey(issuerSelfSignedX509CertificateAndSigningKey.getSigningKey())
                 .setPublicKey(publicKey)
+                .addExtension(new BasicConstraintsExtension(false, false, -1))
                 .setSerialNumber(serialNumberValue);
         if (generalName != null) {
             builder.addExtension(new SubjectAlternativeNamesExtension(true, Arrays.asList(generalName)));

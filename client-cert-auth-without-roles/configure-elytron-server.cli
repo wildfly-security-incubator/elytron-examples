@@ -1,0 +1,41 @@
+# Batch script to configure mutual(two way) SSL in the JBoss EAP server without roles
+
+# configure a keystore for both the server keystore and truststore
+/subsystem=elytron/key-store=twoWayKS:add(path=server.keystore.pkcs12, relative-to=jboss.server.config.dir, credential-reference={clear-text=keystorepass}, type=PKCS12)
+/subsystem=elytron/key-store=twoWayTS:add(path=server.truststore.pkcs12,relative-to=jboss.server.config.dir, credential-reference={clear-text=truststorepass}, type=PKCS12)
+
+#configure a key manager using the key store
+/subsystem=elytron/key-manager=twoWayKM:add(key-store=twoWayKS,credential-reference={clear-text=keystorepass})
+
+#configure a trust manager
+/subsystem=elytron/trust-manager=twoWayTM:add(key-store=twoWayTS)
+
+#configure a idsRealm for the user to map to
+/subsystem=elytron/filesystem-realm=idsRealm:add(path=ids, relative-to=jboss.server.config.dir)
+/subsystem=elytron/filesystem-realm=idsRealm:add-identity(identity=client-cert-user)
+
+
+# configure the Server ssl context to connect it to the key manager and the trust manager
+/subsystem=elytron/server-ssl-context=applicationSSC:write-attribute(name=key-manager, value=twoWayKM)
+/subsystem=elytron/server-ssl-context=applicationSSC:write-attribute(name=trust-manager, value=twoWayTM)
+/subsystem=elytron/server-ssl-context=applicationSSC:write-attribute(name=need-client-auth, value=true)
+
+# Obtain CN value from X.509 certificate subject name
+/subsystem=elytron/x500-attribute-principal-decoder=cnDecoder:add(attribute-name=CN, maximum-segments=1)
+/subsystem=elytron/regex-principal-transformer=myRegexTransformer:add(pattern="[a-zA-Z]+\\.[a-zA-Z]+\\.[0-9]+", replacement="client-cert-user")
+/subsystem=elytron/chained-principal-transformer=myChainedTransformer:add(principal-transformers=[cnDecoder, myRegexTransformer])
+
+# Configure a security domain	
+/subsystem=elytron/security-domain=clientCertDomain:add(realms=[{realm=idsRealm}], default-realm=idsRealm, pre-realm-principal-transformer=myChainedTransformer, permission-mapper=default-permission-mapper)
+
+# Configure the CLIENT_CERT HTTP mechanism on elytron
+/subsystem=elytron/configurable-http-server-mechanism-factory=configuredCert:add(http-server-mechanism-factory=global, properties={org.wildfly.security.http.skip-certificate-verification=true})
+/subsystem=elytron/http-authentication-factory=clientCertAuth:add(http-server-mechanism-factory=configuredCert, security-domain=clientCertDomain , mechanism-configurations=[{mechanism-name=CLIENT_CERT}])
+
+batch
+#configure the undertow subsystem	
+/subsystem=undertow/application-security-domain=other:undefine-attribute(name=security-domain)
+/subsystem=undertow/application-security-domain=other:write-attribute(name=http-authentication-factory,value=clientCertAuth)
+run-batch
+
+reload

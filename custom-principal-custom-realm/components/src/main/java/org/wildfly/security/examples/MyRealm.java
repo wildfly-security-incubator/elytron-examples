@@ -19,12 +19,17 @@ package org.wildfly.security.examples;
 import java.security.Principal;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 
 import org.wildfly.security.auth.SupportLevel;
 import org.wildfly.security.auth.server.RealmIdentity;
 import org.wildfly.security.auth.server.RealmUnavailableException;
 import org.wildfly.security.auth.server.SecurityRealm;
+import org.wildfly.security.authz.Attributes;
+import org.wildfly.security.authz.AuthorizationIdentity;
+import org.wildfly.security.authz.MapAttributes;
+import org.wildfly.security.authz.RoleDecoder;
 import org.wildfly.security.credential.Credential;
 import org.wildfly.security.evidence.Evidence;
 import org.wildfly.security.evidence.PasswordGuessEvidence;
@@ -95,6 +100,12 @@ public class MyRealm implements SecurityRealm {
 
                 public boolean exists() throws RealmUnavailableException {
                     return true;
+                }
+
+                public AuthorizationIdentity getAuthorizationIdentity() throws RealmUnavailableException {
+                    Attributes attributes = new MapAttributes();
+                    attributes.addAll(RoleDecoder.KEY_ROLES, Collections.singleton("Users"));
+                    return AuthorizationIdentity.basicIdentity(attributes);
                 }
             };
         }

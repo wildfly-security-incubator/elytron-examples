@@ -80,13 +80,13 @@ server:
     $ mvn wildfly:deploy
 ```
 
-This deploys the `custom-principal-elytron/application/target/custom-principal-elytron.war` to the
+This deploys the `custom-principal-custom-realm/application/target/custom-principal-custom-realm.war` to the
 running instance of the server. You should see a message in the server log indicating that the
 archive deployed successfully.
 
 ### Log into the Web App
 
-You can go to `http://localhost:8080/custom-principal-elytron` to access the web application now.
+You can go to `http://localhost:8080/custom-principal-custom-realm` to access the web application now.
 Selecting the `Access Secured Servlet` link will prompt you for a username and password to log in.
 Log in with `myadmin` and `mypassword`. The raw HTML you'll see is shown below:
 

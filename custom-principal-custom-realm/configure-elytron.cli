@@ -1,0 +1,21 @@
+# Load our custom components module
+module add --name=org.wildfly.security.examples.custom-principal-custom-realm-components --resources=/PATH/TO/elytron-examples/custom-principal-custom-realm/components/target/custom-principal-custom-realm-components.jar --dependencies=org.wildfly.security.elytron
+
+# Start batching
+batch
+
+# Add a custom-realm
+/subsystem=elytron/custom-realm=myRealm:add(module=org.wildfly.security.examples.custom-principal-custom-realm-components, class-name=org.wildfly.security.examples.MyRealm, configuration={myAttribute="myValue"})
+
+# Add custom pre-realm principal transformer that transforms a principal into a custom principal
+/subsystem=elytron/custom-principal-transformer=customPreRealmTransformer:add(module=org.wildfly.security.examples.custom-principal-custom-realm-components,class-name=org.wildfly.security.examples.CustomPreRealmTransformer)
+
+# Create a security-domain that references our custom realm and our custom pre-realm principal transformer
+/subsystem=elytron/security-domain=myDomain:add(realms=[{realm=myRealm}],default-realm=myRealm,pre-realm-principal-transformer=customPreRealmTransformer,permission-mapper=default-permission-mapper)
+
+# Add an application-security-domain mapping to map the default "other" to our newly created security domain
+/subsystem=undertow/application-security-domain=other:write-attribute(name=security-domain, value=myDomain)
+
+# Run batch
+run-batch
+reload

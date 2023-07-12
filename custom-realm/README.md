@@ -15,7 +15,7 @@ Compile:
 Add the module into the WildFly:
 
         bin/jboss-cli.sh
-        module add --name=org.wildfly.security.examples.custom-realm --resources=custom-realm-1.0.0.Alpha1-SNAPSHOT.jar --dependencies=org.wildfly.security.elytron,org.wildfly.extension.elytron
+        module add --name=org.wildfly.security.examples.custom-realm --resources=/PATH/TO/elytron-examples/custom-realm/target/custom-realm-2.0.0.Alpha1-SNAPSHOT.jar --dependencies=org.wildfly.security.elytron
 
 Add a custom-realm into the subsystem:
 

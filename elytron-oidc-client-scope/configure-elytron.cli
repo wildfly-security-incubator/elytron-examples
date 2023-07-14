@@ -1,0 +1,4 @@
+# configure a secure-deployment that specifies the scope attribute
+/subsystem=elytron-oidc-client/secure-deployment=simple-webapp-oidc.war:add(client-id=myclient, provider-url=http://localhost:8080/realms/myrealm, scope=profile email roles web-origins microprofile-jwt offline_access, public-client=true)
+
+reload

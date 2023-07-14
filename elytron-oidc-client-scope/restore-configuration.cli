@@ -1,0 +1,2 @@
+#remove the secure-deployment resource
+/subsystem=elytron-oidc-client/secure-deployment=simple-webapp-oidc.war:remove

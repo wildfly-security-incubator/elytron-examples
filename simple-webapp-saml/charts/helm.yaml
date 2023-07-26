@@ -1,0 +1,12 @@
+build:
+  uri: https://github.com/YOUR_GITHUB_USERNAME/elytron-examples
+  contextDir: simple-webapp-saml
+deploy:
+  volumes:
+    - name: saml-keystore-volume
+      secret:
+        secretName: simple-webapp-saml-secret
+  volumeMounts:
+    - name: saml-keystore-volume
+      mountPath: /etc/keycloak-saml-secret-volume
+      readOnly: true

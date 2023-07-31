@@ -1,0 +1,12 @@
+image:
+  name: quay.io/<your-quay-username>/wildfly
+build:
+  enabled: false
+deploy:
+  env:
+    - name: OIDC_PROVIDER_URL
+      value: <RHSSO_URL>/auth/
+    - name: WILDFLY_OVERRIDING_ENV_VARS
+      value: "1"
+    - name: SUBSYSTEM_LOGGING_PATTERN_FORMATTER_COLOR_PATTERN__PATTERN
+      value: "[redhat-openshift] %-5p %s%e%n"

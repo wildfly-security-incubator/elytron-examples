@@ -16,21 +16,18 @@
 package org.wildfly.security.examples;
 
 import java.security.Principal;
-
-import org.wildfly.extension.elytron.capabilities.PrincipalTransformer;
+import java.util.function.Function;
 
 /**
- * A {@link PrincipalTransformer} to change the name of the {@link CustomPrincipal} after the realm is assigned.
+ * A transformer to change the name of the {@link CustomPrincipal} after the realm is assigned.
  *
  * @author <a href="mailto:carodrig@redhat.com">Cameron Rodriguez</a>
  */
-public class CustomPostRealmTransformer implements PrincipalTransformer {
-
-    private static final PrincipalTransformer delegate = CustomNameRewriter.asPrincipalTransformer(
-            "QuickstartUserPre", "QuickstartUserPost", false);
+public class CustomPostRealmTransformer implements Function<Principal, Principal> {
 
     @Override
     public Principal apply(Principal principal) {
-        return delegate.apply(principal);
+        return CustomPreRealmTransformer.renameCustomPrincipal(principal, "QuickstartUserPre",
+                "QuickstartUserPost", false);
     }
 }

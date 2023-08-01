@@ -11,9 +11,8 @@ batch
 /subsystem=elytron/custom-principal-transformer=customPostRealmRewriter:remove()
 /subsystem=elytron/custom-principal-transformer=customPreRealmTransformer:remove()
 
-# Remove security identity and default JACC policy for Elytron
+# Remove security identity
 /subsystem=elytron/filesystem-realm=principalRealm:remove-identity(identity=customQuickstartUserPost)
-/subsystem=elytron/policy=jacc:remove()
 
 # Run batch
 run-batch

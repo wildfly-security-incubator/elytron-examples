@@ -14,9 +14,8 @@
 
         <version.org.apache.maven.plugins.maven-ejb-plugin>3.2.1</version.org.apache.maven.plugins.maven-ejb-plugin>
         <version.org.codehaus.mojo.exec-maven-plugin>3.1.0</version.org.codehaus.mojo.exec-maven-plugin>
-        <version.org.wildfly.core.wildfly-elytron-integration>20.0.0.Beta7</version.org.wildfly.core.wildfly-elytron-integration>
-        <version.org.wildfly.plugins.wildfly-maven-plugin>4.0.0.Final</version.org.wildfly.plugins.wildfly-maven-plugin>
-        <version.server.bom>27.0.1.Final</version.server.bom>
+        <version.org.wildfly.plugins.wildfly-maven-plugin>4.2.0.Final</version.org.wildfly.plugins.wildfly-maven-plugin>
+        <version.server.bom>29.0.0.Final</version.server.bom>
     </properties>
 
     <modules>
@@ -32,6 +31,11 @@
                 <version>${project.version}</version>
                 <scope>compile</scope>
             </dependency>
+            <dependency>
+                <groupId>org.wildfly.security.examples</groupId>
+                <artifactId>custom-principal-ejb-application</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.wildfly.bom</groupId>
@@ -39,12 +43,6 @@
                 <version>${version.server.bom}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.wildfly.core</groupId>
-                <artifactId>wildfly-elytron-integration</artifactId>
-                <version>${version.org.wildfly.core.wildfly-elytron-integration}</version>
-                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

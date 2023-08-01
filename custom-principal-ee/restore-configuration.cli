@@ -8,9 +8,6 @@ batch
 # Remove security domain and custom principal transformer
 /subsystem=elytron/security-domain=principalSecDomain:remove()
 
-# Remove default JACC policy for Elytron
-/subsystem=elytron/policy=jacc:remove()
-
 # Run batch
 run-batch
 reload

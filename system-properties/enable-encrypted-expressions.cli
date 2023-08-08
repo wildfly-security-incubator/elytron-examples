@@ -1,0 +1,11 @@
+batch
+
+history --disable
+
+/subsystem=elytron/secret-key-credential-store=initial:add(relative-to=jboss.server.config.dir, path=initial.cs)
+
+/subsystem=elytron/secret-key-credential-store=initial:export-secret-key(alias=key)
+
+/subsystem=elytron/expression=encryption:add(resolvers=[{name=initial-resolver, credential-store=initial, secret-key=key}])
+
+run-batch

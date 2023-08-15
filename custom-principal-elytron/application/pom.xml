@@ -10,11 +10,11 @@
     </parent>
 
     <artifactId>custom-principal-elytron-application</artifactId>
-    <version>2.0.0.Alpha1-SNAPSHOT</version>
+    <version>${parent.version}</version>
     <packaging>war</packaging>
 
     <properties>
-        <version.io.undertow>2.3.5.Final</version.io.undertow>
+        <version.io.undertow>2.3.7.Final</version.io.undertow>
     </properties>
 
     <dependencies>

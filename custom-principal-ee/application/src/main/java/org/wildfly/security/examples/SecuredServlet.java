@@ -59,11 +59,11 @@ public class SecuredServlet extends HttpServlet {
 
         return String.join(newline,
                 "<!DOCTYPE html>",
-                "<html>",
+                "<html lang=\"en\">",
                 "    <head><title>SecuredServlet - doGet()</title></head>",
                 "    <body>",
                 "        <h1>Custom Principal - EE Demo</h1>",
-                "        <p>For reference, transform sequence is quickstartUser -> <em>customQuickstartUserPre</em> -> customQuickstartUserPost -> customQuickstartUserFinal.</p>",
+                "        <p>For reference, transform sequence is quickstartUser -> <em>customQuickstartUser</em>.</p>",
                 "        <p>Injection check - these values should match:</p>",
                 "        <ul>",
                 String.format("            <li>Identity as available from Jakarta Security (<code>SecurityContext</code>): <strong>%s</strong></li>", securityContext.getCallerPrincipal().getName()),

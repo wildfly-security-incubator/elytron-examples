@@ -64,7 +64,7 @@ public class SecuredServlet extends HttpServlet {
 
         return String.join(newline,
                 "<!DOCTYPE html>",
-                "<html>",
+                "<html lang=\"en\">",
                 "    <head><title>SecuredServlet - doGet()</title></head>",
                 "    <body>",
                 "        <h1>Custom Principal - Elytron Demo</h1>",

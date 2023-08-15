@@ -17,24 +17,47 @@ package org.wildfly.security.examples;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.function.Function;
 
-import org.wildfly.extension.elytron.capabilities.PrincipalTransformer;
+import org.wildfly.security.auth.principal.NamePrincipal;
 
 /**
- * A {@link PrincipalTransformer} to create a custom principal. An offset {@value LOGIN_DELTA_DAYS LOGIN_DELTA_DAYS} is used to simulate the time since the last
+ * A transformer to create a custom principal. An offset of {@link #LOGIN_DELTA_DAYS} is used to simulate the time since the last
  * user was logged in.
  *
  * @author <a href="mailto:carodrig@redhat.com">Cameron Rodriguez</a>
  */
-public class CustomPreRealmTransformer implements PrincipalTransformer {
+public class CustomPreRealmTransformer implements Function<Principal, Principal> {
 
     private static final int LOGIN_DELTA_DAYS = 10;
-    private static final PrincipalTransformer delegate = CustomNameRewriter.asPrincipalTransformer(
-            "quickstartUser", "customQuickstartUserPre", false);
 
     @Override
     public Principal apply(Principal principal) {
-        return new CustomPrincipal(delegate.apply(principal), LocalDateTime.now().minusDays(LOGIN_DELTA_DAYS));
+        return new CustomPrincipal(
+                renameCustomPrincipal(principal, "quickstartUser", "customQuickstartUserPre", false),
+                LocalDateTime.now().minusDays(LOGIN_DELTA_DAYS));
+    }
+
+    /**
+     * @return a {@link Principal}. It will return {@link CustomPrincipal} if the input was the same class,
+     * otherwise {@link NamePrincipal} if there was a valid name for the Principal, and if not then the original principal.
+     */
+    static Principal renameCustomPrincipal(Principal principal, String pattern, String replacement, boolean replaceAll) {
+        if (principal == null) {
+            return null;
+        } else if (principal.getName() != null) {
+            String rewritten = replaceAll
+                    ? principal.getName().replaceAll(pattern, replacement)
+                    : principal.getName().replaceFirst(pattern, replacement);
+
+            if (principal instanceof CustomPrincipal) {
+                CustomPrincipal cPrincipal = (CustomPrincipal) principal;
+                return new CustomPrincipal(rewritten,
+                        cPrincipal.getLastLoginTime(), cPrincipal.getCurrentLoginTime());
+            } else { // CustomPrincipal not being used
+                return new NamePrincipal(rewritten);
+            }
+        } else return principal;
     }
 
 }

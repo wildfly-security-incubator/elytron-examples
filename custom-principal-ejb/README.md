@@ -67,11 +67,8 @@ module, which contains our custom principal:
    class [CustomPreRealmTransformer](./components/src/main/java/org/wildfly/security/examples/CustomPreRealmTransformer.java))
    is added. This transformer converts the internal NamePrincipal into our custom format, and is
    required to use it.
-4. Custom post-realm and final principal transformers are added to rename the principal. Note that
-   these classes wrap
-   [CustomNameRewriter](./components/src/main/java/org/wildfly/security/examples/CustomNameRewriter.java);
-   even though the functionality is the same as the `regex-principal-transformer`, the use of a
-   custom principal means a default transformer can't be used.
+4. Custom post-realm and final principal transformers are added to rename the principal. These classes have similar functionality to the `regex-principal-transformer` resource in Elytron, however the use of a
+   custom principal means the existing one can't be used.
 5. A security domain is created, referencing the filesystem realm and the pre-realm and post-realm
    transformers.
 6. A SASL authentication factory is created, referencing both the security domain and the final

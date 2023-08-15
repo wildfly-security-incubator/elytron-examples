@@ -5,9 +5,6 @@ reload
 # Start batching
 batch
 
-# Enable a default JACC policy for Elytron
-/subsystem=elytron/policy=jacc:add(jacc-policy={})
-
 # Create security domain
 /subsystem=elytron/security-domain=principalSecDomain:add(permission-mapper=default-permission-mapper)
 

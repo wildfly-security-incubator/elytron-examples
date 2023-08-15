@@ -76,21 +76,17 @@ module, which contains our custom principal:
 
 1. The `custom-principal-elytron-components` archive is added as a module to the server. This allows
    the custom components to be used by the server.
-2. A default JACC (Jakarta Authorization) policy is created, allowing deployments to use
-   the `SecurityContext` interface from the Jakarta Security API.
-3. A filesystem realm is created, and an identity is created for the
+2. A filesystem realm is created, and an identity is created for the
    user `customQuickstartUserPost`.
-4. A custom pre-realm-principal-transformer (from the
+3. A custom pre-realm-principal-transformer (from the
    class [CustomPreRealmTransformer](./components/src/main/java/org/wildfly/security/examples/CustomPreRealmTransformer.java))
    is added. This transformer converts the internal NamePrincipal into our custom format, and is
    required to use it.
-5. A custom post-realm transformer is added to rename the principal. Note that this classes
-   wraps [CustomNameRewriter](./components/src/main/java/org/wildfly/security/examples/CustomNameRewriter.java);
-   even though the functionality is the same as the `regex-principal-transformer`, the use of a
-   custom principal means a default transformer can't be used.
-6. A security domain is created, referencing the filesystem realm and the pre-realm and post-realm
+4. A custom post-realm transformer is added to rename the principal. This class has similar functionality to the `regex-principal-transformer` resource in Elytron, however the use of a
+   custom principal means the existing one can't be used.
+5. A security domain is created, referencing the filesystem realm and the pre-realm and post-realm
    transformers.
-7. The `application-security-domain` mapping in the Undertow subsystem is updated to reference this
+6. The `application-security-domain` mapping in the Undertow subsystem is updated to reference this
    security domain.
 
 In the `configure-elytron.cli` script, replace `/PATH/TO` with the parent directory of
@@ -136,7 +132,7 @@ in with, as well as how the principal was handled internally. The raw HTML is sh
 
 ```html
 <!DOCTYPE html>
-<html>
+<html lang="en">
    <head><title>SecuredServlet - doGet()</title></head>
    <body>
       <h1>Custom Principal - Elytron Demo</h1>

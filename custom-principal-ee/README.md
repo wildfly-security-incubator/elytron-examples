@@ -65,11 +65,9 @@ module, which contains our custom principal:
 
 1. The `custom-principal-ee-components` archive is added as a module to the server. This allows the
    custom components to be used by the server.
-2. A default JACC (Jakarta Authorization) policy is created, allowing deployments to use
-   the `SecurityContext` interface from the Jakarta Security API to access the authorized identity.
-3. A new security domain is created, and the `application-security-domain` mapping in the Undertow
+2. A new security domain is created, and the `application-security-domain` mapping in the Undertow
    subsystem is updated to reference this security domain.
-4. The `integrated-jaspi` attribute for the `application-security-domain` is disabled, to allow
+3. The `integrated-jaspi` attribute for the `application-security-domain` is disabled, to allow
    ad-hoc identities to be created dynamically.
 
 In the `configure-elytron.cli` script, replace `/PATH/TO` with the parent directory of
@@ -142,22 +140,22 @@ $ curl -v http://localhost:8080/custom-principal-ee/secured -H "Authorization: B
 < Cache-Control: no-cache, no-store, must-revalidate
 [...]
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head><title>SecuredServlet - doGet()</title></head>
     <body>
         <h1>Custom Principal - Elytron Demo</h1>
-        <p>For reference, transform sequence is quickstartUser -> <em>customQuickstartUserPre</em> -> customQuickstartUserPost -> customQuickstartUserFinal.</p>
+        <p>For reference, transform sequence is quickstartUser -> <em>customQuickstartUser</em>.</p>
         <p>Injection check - these values should match:</p>
         <ul>
-            <li>Identity as available from Jakarta Security (<code>SecurityContext</code>): <strong>customQuickstartUserPre</strong></li>
-            <li>Identity as available from injection (<code>SecurityIdentity</code>): <strong>customQuickstartUserPre</strong></li>
-            <li>Identity as provided in HTTPServletRequest: <strong>customQuickstartUserPre</strong></li>
+            <li>Identity as available from Jakarta Security (<code>SecurityContext</code>): <strong>customQuickstartUser</strong></li>
+            <li>Identity as available from injection (<code>SecurityIdentity</code>): <strong>customQuickstartUser</strong></li>
+            <li>Identity as provided in HTTPServletRequest: <strong>customQuickstartUser</strong></li>
         </ul>
         <p>Custom Principal check - these values should match:</p>
         <ul>
-            <li>Caller principal<code>(SecurityContext.getCallerPrincipal)</code>: Class -> <strong>org.wildfly.security.examples.CustomPrincipal</strong>, Name -> <strong>customQuickstartUserPre</strong></li>
-            <li>Custom principal<code>(SecurityContext.getPrincipalsByType)</code>: Class -> <strong>org.wildfly.security.examples.CustomPrincipal</strong>, Name -> <strong>customQuickstartUserPre</strong></li>
-            <li>Injection<code>(SecurityIdentity.getPrincipal)</code>: Class -> <strong>org.wildfly.security.examples.CustomPrincipal</strong>, Name -> <strong>customQuickstartUserPre</strong></li>
+            <li>Caller principal<code>(SecurityContext.getCallerPrincipal)</code>: Class -> <strong>org.wildfly.security.examples.CustomPrincipal</strong>, Name -> <strong>customQuickstartUser</strong></li>
+            <li>Custom principal<code>(SecurityContext.getPrincipalsByType)</code>: Class -> <strong>org.wildfly.security.examples.CustomPrincipal</strong>, Name -> <strong>customQuickstartUser</strong></li>
+            <li>Injection<code>(SecurityIdentity.getPrincipal)</code>: Class -> <strong>org.wildfly.security.examples.CustomPrincipal</strong>, Name -> <strong>customQuickstartUser</strong></li>
         </ul>
         <p>Custom Principal usage - this check will return a result of <em>enabled</em> if the CustomPrincipal was injected properly:</p>
         <ul>

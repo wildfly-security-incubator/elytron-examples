@@ -1,0 +1,83 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.wildfly.security.examples</groupId>
+    <artifactId>simple-webapp-saml</artifactId>
+    <packaging>war</packaging>
+    <version>2.0.0.Alpha1-SNAPSHOT</version>
+    <name>simple-webapp Maven Webapp</name>
+    <url>http://maven.apache.org</url>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <version.maven.war.plugin>3.3.2</version.maven.war.plugin>
+        <version.wildfly>29.0.0.Final</version.wildfly>
+        <version.wildfly.maven.plugin>4.2.0.Final</version.wildfly.maven.plugin>
+        <version.wildfly.cloud.galleon.pack>4.0.0.Final</version.wildfly.cloud.galleon.pack>
+        <jakarta.jakartaee-api.version>10.0.0</jakarta.jakartaee-api.version>
+        <version.keycloak>22.0.1</version.keycloak>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.wildfly.bom</groupId>
+                <artifactId>wildfly-ee-with-tools</artifactId>
+                <version>${version.wildfly}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>simple-webapp-saml</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>${version.maven.war.plugin}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>${version.wildfly.maven.plugin}</version>
+                <configuration>
+                    <feature-packs>
+                        <feature-pack>
+                            <location>org.wildfly:wildfly-galleon-pack:${version.wildfly}</location>
+                        </feature-pack>
+                        <feature-pack>
+                            <location>org.wildfly.cloud:wildfly-cloud-galleon-pack:${version.wildfly.cloud.galleon.pack}</location>
+                        </feature-pack>
+                        <feature-pack>
+                            <location>org.keycloak:keycloak-saml-adapter-galleon-pack:${version.keycloak}</location>
+                        </feature-pack>
+                    </feature-packs>
+                    <layers>
+                        <layer>cloud-server</layer>
+                        <layer>keycloak-client-saml</layer>
+                    </layers>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>package</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+
+</project>

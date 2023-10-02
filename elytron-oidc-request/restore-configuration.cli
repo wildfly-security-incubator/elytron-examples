@@ -1,0 +1,1 @@
+/subsystem=elytron-oidc-client/secure-deployment=oidc.war:remove

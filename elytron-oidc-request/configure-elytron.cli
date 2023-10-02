@@ -1,0 +1,8 @@
+#create the secure deployment
+/subsystem=elytron-oidc-client/secure-deployment=oidc.war:add(client-id=myclient, provider-url=http://localhost:8080/realms/myrealm, authentication-request-format=request, request-object-signing-algorithm=none, public-client=false)
+
+#Configure the client secret. Add the actual value before running the script
+/subsystem=elytron-oidc-client/secure-deployment=simple-webapp-oidc.war/credential=mySecret:add(secret=<INSERT CLIENT SECRET>)
+reload
+
+

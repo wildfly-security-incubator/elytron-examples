@@ -1,0 +1,8 @@
+build:
+  uri: https://github.com/wildfly-security-incubator/elytron-examples.git
+  contextDir: simple-webapp-oidc
+deploy:
+  replicas: 1
+  env:
+    - name: OIDC_PROVIDER_URL
+      value: <KEYCLOAK_URL>

@@ -7,16 +7,36 @@
     <version>1.0-SNAPSHOT</version>
     <artifactId>client</artifactId>
     <packaging>jar</packaging>
+
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.release>11</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	<version.jakarta-client-webservices>3.0.3.Final</version.jakarta-client-webservices>
+        <version.wildfly-jaxws-client-bom>29.0.1.Final</version.wildfly-jaxws-client-bom>
+        <version.junit>4.13.2</version.junit>
     </properties>
+
+    <!-- Workaround https://groups.google.com/g/ehcache-users/c/U1bO6QArswQ -->
+    <dependencyManagement>
+      <dependencies>
+        <dependency>
+          <groupId>org.glassfish.jaxb</groupId>
+          <artifactId>jaxb-runtime</artifactId>
+          <version>2.3.6</version>
+        </dependency>
+      </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
+            <groupId>org.wildfly.security.jakarta</groupId>
+            <artifactId>jakarta-client-webservices</artifactId>
+            <version>${version.jakarta-client-webservices}</version>
+        </dependency>
+        <dependency>
             <groupId>org.wildfly</groupId>
             <artifactId>wildfly-jaxws-client-bom</artifactId>
-            <version>19.0.0.Beta1</version>
+	    <version>${version.wildfly-jaxws-client-bom}</version>
             <type>pom</type>
         </dependency>
         <dependency>
@@ -24,13 +44,41 @@
             <artifactId>server</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
+	    <classifier>classes</classifier>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13.1</version>
+	    <version>${version.junit}</version>
             <scope>compile</scope>
         </dependency>
+        <!-- https://groups.google.com/g/ehcache-users/c/U1bO6QArswQ -->
+        <dependency>
+          <groupId>org.ehcache</groupId>
+          <artifactId>ehcache</artifactId>
+	  <version>3.10.0</version>
+        </dependency>
+        <!-- https://groups.google.com/g/ehcache-users/c/U1bO6QArswQ -->
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+        <!-- https://groups.google.com/g/ehcache-users/c/U1bO6QArswQ -->
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>3.0.0</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
+
+    <!-- https://github.com/spring-projects/spring-security/issues/11966 -->
+    <repositories>
+        <repository>
+            <id>shibboleth</id>
+            <url>https://build.shibboleth.net/nexus/content/repositories/releases/</url>
+        </repository>
+    </repositories>
 
 </project>

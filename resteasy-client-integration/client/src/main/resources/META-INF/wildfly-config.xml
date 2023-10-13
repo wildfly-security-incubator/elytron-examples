@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration>
-    <authentication-client xmlns="urn:elytron:client:1.5">
+    <authentication-client xmlns="urn:elytron:client:1.7">
         <authentication-rules>
             <rule use-configuration="auth-config" />
         </authentication-rules>
         <key-stores>
-            <key-store name="truststore" type="JKS">
-                <file name="/path/to/client.truststore.jks"/>
+            <key-store name="truststore" type="PKCS12">
+                <file name="/PATH/TOclient.truststore.pkcs12"/>
                 <key-store-clear-password password="secret"/>
             </key-store>
-            <key-store name="keystore" type="JKS">
-                <file name="/path/to/client.keystore.jks"/>
+            <key-store name="keystore" type="PKCS12">
+                <file name="/PATH/TO/client.keystore.pkcs12"/>
                 <key-store-clear-password password="secret"/>
             </key-store>
         </key-stores>

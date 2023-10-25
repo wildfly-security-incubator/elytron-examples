@@ -7,11 +7,11 @@
         </authentication-rules>
         <key-stores>
             <key-store name="truststore" type="PKCS12">
-                <file name="/PATH/TOclient.truststore.pkcs12"/>
+		<file name="../client-wf29-jks/client.truststore.pkcs12"/>
                 <key-store-clear-password password="secret"/>
             </key-store>
             <key-store name="keystore" type="PKCS12">
-                <file name="/PATH/TO/client.keystore.pkcs12"/>
+		<file name="../client-wf29-jks/client.keystore.pkcs12"/>
                 <key-store-clear-password password="secret"/>
             </key-store>
         </key-stores>

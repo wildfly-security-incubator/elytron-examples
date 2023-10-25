@@ -9,6 +9,8 @@
     <packaging>war</packaging>
 
     <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <maven.compiler.release>11</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.wildfly-elytron>2.2.2.Final</version.wildfly-elytron>

@@ -4,7 +4,7 @@
 
 This example uses java security API to dynamically register a provider. Alternatively, you can use static provider registration and add the `WildFlyElytronClientDefaultSSLContextProvider` to the list of providers in java.security file.
 
-* Configure mutual SSL on your running WildFly instance. You can read how to do it here: [two-way SSL in Wildfly](https://docs.wildfly.org/27/WildFly_Elytron_Security.html#enable-two-way-ssltls-in-wildfly-for-applications)
+* Configure mutual SSL on your running WildFly instance. You can read how to do it here: [two-way SSL in Wildfly](https://docs.wildfly.org/30/WildFly_Elytron_Security.html#enable-two-way-ssltls-in-wildfly-for-applications)
 
 * Configure path to client's keystore and truststore in this project's *wildfly-config-two-way-tls.xml* accordingly
 

@@ -1,0 +1,9 @@
+{
+    "client-id" : "${env.CLIENT_ID}",
+    "provider-url" : "https://${env.DOMAIN}",
+    "ssl-required" : "EXTERNAL",
+    "credentials" : {
+        "secret" : "${env.CLIENT_SECRET}"
+    }
+}
+

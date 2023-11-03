@@ -1,0 +1,12 @@
+build:
+  uri: https://github.com/YOUR_GITHUB_USERNAME/elytron-examples
+  contextDir: simple-webapp-auth0
+deploy:
+  env:
+    - name: CLIENT_ID
+      value: <AUTH0_CLIENT_ID>
+    - name: CLIENT_SECRET
+      value: <AUTH0_CLIENT_SECRET>
+    - name: DOMAIN
+      value: <AUTH0_DOMAIN>
+

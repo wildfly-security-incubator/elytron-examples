@@ -1,0 +1,7 @@
+batch
+
+# Configure a virtual-security-domain that will be referenced by the WhoAmIBean
+/subsystem=elytron/virtual-security-domain=same-virtual-domain.ear:add()
+
+# Run the batch commands
+run-batch

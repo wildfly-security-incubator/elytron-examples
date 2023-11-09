@@ -1,6 +1,6 @@
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Service;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Service;
 
 import org.wildfly.elytron.ws.client.example.HelloService;
 import org.jboss.wsf.stack.cxf.client.configuration.CXFClientConfigurer;

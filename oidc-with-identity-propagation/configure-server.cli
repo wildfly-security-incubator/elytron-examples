@@ -1,0 +1,29 @@
+# Batch script to configure the security domains and define the database query used to authenticate users
+batch
+
+# Add a filesystem realm called BusinessRealm in the jboss.server.config directory
+/subsystem=elytron/filesystem-realm=BusinessRealm:add(path=business-realm-users,relative-to=jboss.server.config.dir)
+
+# Add user alice with Admin role
+/subsystem=elytron/filesystem-realm=BusinessRealm:add-identity(identity=alice)
+/subsystem=elytron/filesystem-realm=BusinessRealm:add-identity-attribute(identity=alice, name=Roles, value=["Admin"])
+
+# Add user bob with no roles
+/subsystem=elytron/filesystem-realm=BusinessRealm:add-identity(identity=bob)
+
+# Add a security domain that references our newly created realm
+/subsystem=elytron/security-domain=BusinessDomain:add(realms=[{realm=BusinessRealm}],default-realm=BusinessRealm,permission-mapper=default-permission-mapper)
+
+# Update the application security domain mappings in the EJB3 subsystem
+/subsystem=ejb3/application-security-domain=BusinessDomain:add(security-domain=BusinessDomain)
+
+/subsystem=elytron/virtual-security-domain=virtual-security-domain-to-domain.ear:add(outflow-security-domains=[BusinessDomain])
+/subsystem=elytron/security-domain=BusinessDomain:write-attribute(name=trusted-virtual-security-domains, value=[virtual-security-domain-to-domain.ear])
+
+# Run the batch commands
+run-batch
+
+# Reload the server configuration
+reload
+
+

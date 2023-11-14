@@ -62,7 +62,7 @@ public class WhoAmIServlet extends HttpServlet {
         writer.println(String.format("<p>Caller Has Role '%s'=%b</p>", "User", req.isUserInRole("User")));
         writer.println(String.format("<p>Caller Has Role '%s'=%b</p>", "Admin", bean.userHasRole("Admin")));
 
-        writer.println("<h2>Identity as visible to ManagementBean.</h2>");
+        writer.println("<h2>Identity as visible to WhoAmIBean.</h2>");
         writer.println(String.format("<p>%s</p>", bean.invokeWhoAmIBean()));
 
         writer.println("</body></html>");

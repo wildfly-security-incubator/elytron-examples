@@ -1,5 +1,5 @@
 {
-    "client-id" : "service-jaxrs",
+    "client-id" : "service",
     "provider-url" : "${env.OIDC_PROVIDER_URL:http://localhost:8080}/realms/myrealm",
     "ssl-required" : "EXTERNAL",
     "bearer-only" : "true"

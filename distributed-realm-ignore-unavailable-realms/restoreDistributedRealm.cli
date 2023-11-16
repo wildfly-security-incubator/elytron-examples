@@ -1,0 +1,26 @@
+/subsystem=elytron/filesystem-realm=FsRealm1:remove-identity(identity=user1)
+
+/subsystem=elytron/filesystem-realm=FsRealm2:remove-identity(identity=user2)
+
+batch
+
+undeploy distributed-realm-ignore-unavailable-realms-demo.war
+
+/subsystem=undertow/application-security-domain=httpSD:remove()
+
+/subsystem=elytron/security-domain=distributedSD:remove()
+
+/subsystem=elytron/distributed-realm=distributedRealm:remove()
+
+/subsystem=elytron/filesystem-realm=FsRealm1:remove()
+
+/subsystem=elytron/filesystem-realm=FsRealm2:remove()
+
+# Remove LDAP realm and configuration
+/subsystem=elytron/ldap-realm=LdapRealm:remove()
+
+/subsystem=elytron/dir-context=exampleDC:remove()
+
+run-batch
+
+reload

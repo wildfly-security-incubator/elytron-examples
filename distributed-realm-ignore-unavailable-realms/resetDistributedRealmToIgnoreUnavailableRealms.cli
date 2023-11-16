@@ -1,0 +1,20 @@
+batch
+
+/subsystem=undertow/application-security-domain=httpSD:remove()
+
+/subsystem=elytron/security-domain=distributedSD:remove()
+
+/subsystem=elytron/distributed-realm=distributedRealm:remove()
+
+# Add distributed realm that combines both filesystem realms and unavailable Ldap realm and sets ignore-unavailable-realms attribute to true
+/subsystem=elytron/distributed-realm=distributedRealm:add(realms=[FsRealm1, LdapRealm, FsRealm2], ignore-unavailable-realms=true)
+
+# Add security domain distributedSD that uses distributedRealm
+/subsystem=elytron/security-domain=distributedSD:add(default-realm=distributedRealm,permission-mapper=default-permission-mapper,realms=[{realm=distributedRealm}])
+
+# Configure undertow to use distributedSD security domain
+/subsystem=undertow/application-security-domain=httpSD:add(security-domain=distributedSD)
+
+run-batch
+
+reload

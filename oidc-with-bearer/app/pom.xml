@@ -29,7 +29,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <version.wildfly.maven.plugin>2.0.0.Final</version.wildfly.maven.plugin>
-        <version.server.bom>27.0.0.Final</version.server.bom>
+        <version.server.bom>30.0.0.Final</version.server.bom>
     </properties>
 
     <licenses>

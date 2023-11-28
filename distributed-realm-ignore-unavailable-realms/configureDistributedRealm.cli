@@ -1,0 +1,26 @@
+batch
+/subsystem=elytron/filesystem-realm=FsRealm1:add(path=demofs-realm-users1,relative-to=jboss.server.config.dir)
+/subsystem=elytron/filesystem-realm=FsRealm1:add-identity(identity=user1)
+/subsystem=elytron/filesystem-realm=FsRealm1:set-password(identity=user1,clear={password="passwordUser1"})
+/subsystem=elytron/filesystem-realm=FsRealm1:add-identity-attribute(identity=user1,name=Roles, value=["Admin"])
+
+/subsystem=elytron/filesystem-realm=FsRealm2:add(path=demofs-realm-users2,relative-to=jboss.server.config.dir)
+/subsystem=elytron/filesystem-realm=FsRealm2:add-identity(identity=user2)
+/subsystem=elytron/filesystem-realm=FsRealm2:set-password(identity=user2,clear={password="passwordUser2"})
+/subsystem=elytron/filesystem-realm=FsRealm2:add-identity-attribute(identity=user2,name=Roles, value=["Admin"])
+
+# Configure LDAP realm
+/subsystem=elytron/dir-context=exampleDC:add(url="ldap://172.17.0.2:389",principal="cn=admin,dc=wildfly,dc=org",credential-reference={clear-text="admin"})
+/subsystem=elytron/ldap-realm=LdapRealm:add(dir-context=exampleDC,identity-mapping={search-base-dn="ou=Users,dc=wildfly,dc=org",rdn-identifier="uid",user-password-mapper={from="userPassword"},attribute-mapping=[{filter-base-dn="ou=Roles,dc=wildfly,dc=org",filter="(&(objectClass=groupOfNames)(member={1}))",from="cn",to="Roles"}]})
+
+# Add distributed realm that combines both filesystem realms and unavailable Ldap realm
+/subsystem=elytron/distributed-realm=distributedRealm:add(realms=[FsRealm1, LdapRealm, FsRealm2])
+
+# Add security domain distributedSD that uses distributedRealm
+/subsystem=elytron/security-domain=distributedSD:add(default-realm=distributedRealm,permission-mapper=default-permission-mapper,realms=[{realm=distributedRealm}])
+ 
+# Configure undertow to use distributedSD security domain
+/subsystem=undertow/application-security-domain=httpSD:add(security-domain=distributedSD)
+
+run-batch
+reload

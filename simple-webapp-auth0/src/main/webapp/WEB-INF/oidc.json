@@ -2,6 +2,7 @@
     "client-id" : "${env.CLIENT_ID}",
     "provider-url" : "https://${env.DOMAIN}",
     "ssl-required" : "EXTERNAL",
+    "principal-attribute" : "name",
     "credentials" : {
         "secret" : "${env.CLIENT_SECRET}"
     }

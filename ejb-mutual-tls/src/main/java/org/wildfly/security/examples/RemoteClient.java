@@ -16,7 +16,7 @@
 
 package org.wildfly.security.examples;
 
-import javax.ejb.EJBAccessException;
+import jakarta.ejb.EJBAccessException;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.util.Hashtable;

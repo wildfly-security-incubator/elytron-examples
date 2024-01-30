@@ -1,0 +1,94 @@
+# Batch script to configure Elytron for the example mutual TLS application on the WildFly server
+
+# Start batching commands
+batch
+
+
+## Filesystem Realm and Security Domain ##
+# Add a filesystem realm that resides in directory tlsFsRealmUsers inside the base configuration directory defined by jboss.server.config.dir property.
+/subsystem=elytron/filesystem-realm=tlsFsRealm:add(path=tlsFsRealmUsers, relative-to=jboss.server.config.dir)
+
+# Add the example identity
+/subsystem=elytron/filesystem-realm=tlsFsRealm:add-identity(identity=example_user)
+
+# Add the password for the example identity
+/subsystem=elytron/filesystem-realm=tlsFsRealm:set-password(identity=example_user, clear={password=examplePwd1!})
+
+# Add the guest role for the example identity
+/subsystem=elytron/filesystem-realm=tlsFsRealm:add-identity-attribute(identity=example_user, name=Roles, value=[guest])
+
+# Configure the security domain using the filesystem realm
+/subsystem=elytron/security-domain=tlsFsSD:add(realms=[{realm=tlsFsRealm}],default-realm=tlsFsRealm,permission-mapper=default-permission-mapper)
+
+# Add the security domain mapping to the EJB3 subsystem
+/subsystem=ejb3/application-security-domain=tlsApp:add(security-domain=tlsFsSD)
+
+
+## Server KeyStore and TrustStore ##
+# Add the key store for the server in the base configuration directory
+/subsystem=elytron/key-store=tlsKeyStore:add(path=tlsServer.keystore,relative-to=jboss.server.config.dir,credential-reference={clear-text=serverKeySecret})
+
+# Run the batched commands to start the key store
+run-batch
+
+# Start batching commands again
+batch
+
+# Generate a key pair using RSA-2048, valid for 365 days
+/subsystem=elytron/key-store=tlsKeyStore:generate-key-pair(alias=localhost,algorithm=RSA,key-size=2048,validity=365,credential-reference={clear-text=serverKeySecret},distinguished-name="CN=localhost")
+
+# Store the key store to file
+/subsystem=elytron/key-store=tlsKeyStore:store()
+
+# Export the server certificate to a certificates folder in the base configuration directory
+/subsystem=elytron/key-store=tlsKeyStore:export-certificate(alias=localhost,path=tlsServer.cer,relative-to=jboss.server.config.dir)
+
+# Add the key manager to reference the key store
+/subsystem=elytron/key-manager=tlsKM:add(key-store=tlsKeyStore,credential-reference={clear-text=serverKeySecret})
+
+# Add the trust store for holding certificates in the base configuration directory
+/subsystem=elytron/key-store=tlsTrustStore:add(path=tlsServer.truststore,relative-to=jboss.server.config.dir,credential-reference={clear-text=serverTrustSecret})
+
+# Run the batched commands to start the trust server
+run-batch
+
+# Start batching commands again
+batch
+
+# Import the client certificate into the trust store. Since the certificate is self-signed, it will not be validated
+/subsystem=elytron/key-store=tlsTrustStore:import-certificate(alias=client,path=/PATH/TO/tlsClient.cer,credential-reference={clear-text=serverTrustSecret},trust-cacerts=true,validate=false)
+
+# Store the trust store to file
+/subsystem=elytron/key-store=tlsTrustStore:store()
+
+# Configure the trust manager to reference the trust store
+/subsystem=elytron/trust-manager=tlsTM:add(key-store=tlsTrustStore)
+
+
+## TLS, SASL and Connector Configuration ##
+# Add the server SSL/TLS context to reference the trust and key managers. This context requires client authentication for mutual TLS, and supports TLSv1.2 and TLSv1.3
+/subsystem=elytron/server-ssl-context=tlsSSC:add(key-manager=tlsKM,protocols=["TLSv1.3","TLSv1.2"],cipher-suite-names=TLS_AES_128_GCM_SHA256,trust-manager=tlsTM,need-client-auth=true)
+
+# Run the batched commands
+run-batch
+
+# Start batching commands again
+batch
+
+# Configure the https-listener to use Elytron's SSL/TLS context
+/subsystem=undertow/server=default-server/https-listener=https:write-attribute(name=ssl-context,value=tlsSSC)
+
+# Add the SASL authentication factory to use SCRAM-SHA-512-PLUS for channel binding, and the security domain
+/subsystem=elytron/sasl-authentication-factory=tlsSASLFactory:add(sasl-server-factory=configured,security-domain=tlsFsSD,mechanism-configurations=[{mechanism-name=SCRAM-SHA-512-PLUS}])
+
+# Add the remote HTTP connector using the HTTPS listener and SASL authentication factory
+/subsystem=remoting/http-connector=tlsConnector:add(connector-ref=https,sasl-authentication-factory=tlsSASLFactory)
+
+# Add the remote HTTPS connector to the ejb3 subsystem
+/subsystem=ejb3/service=remote:write-attribute(name=connectors,value=[tlsConnector])
+
+# Run the batched commands
+run-batch
+
+# Reload the server configuration
+reload

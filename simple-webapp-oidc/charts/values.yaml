@@ -1,0 +1,10 @@
+image:
+  name: <IMAGE_NAME>
+build:
+  enabled: false # The build part is not needed since we have already built our application with the wildfly-maven-plugin plugin
+deploy:
+  route:
+    enabled: false # the route can be enabled, but only for OpenShift clusters
+  env:
+    - name: OIDC_PROVIDER_URL
+      value: <KEYCLOAK_URL>

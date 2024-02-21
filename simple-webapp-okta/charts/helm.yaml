@@ -1,0 +1,12 @@
+build:
+  uri: https://github.com/wildfly-security-incubator/elytron-examples.git
+  contextDir: simple-webapp-okta
+deploy:
+  replicas: 1
+  env:
+    - name: OIDC_PROVIDER_URL
+      value: <OKTA_URL>
+    - name: OIDC_CLIENT_ID
+      value: <CLIENT_ID>
+    - name: OIDC_CLIENT_SECRET
+      value: <CLIENT_SECRET>

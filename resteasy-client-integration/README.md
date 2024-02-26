@@ -10,7 +10,7 @@
 We have added new user jane to the security domain and set HTTP BASIC authentication for application security domain.
 Please see content of configure.cli for more information.
 
-* Configure mutual SSL on your running wildfly instance. You can read how to do it here: [two-way SSL in Wildfly](https://docs.jboss.org/author/display/WFLY/Using%20the%20Elytron%20Subsystem.html#110231569_UsingtheElytronSubsystem-EnableTwowaySSL%2FTLSinWildFlyforApplications)
+* Configure mutual SSL on your running wildfly instance. You can read how to do it here: [two-way SSL in Wildfly](https://docs.wildfly.org/29/WildFly_Elytron_Security.html#enable-two-way-ssltls-in-wildfly-for-applications)
 
 * Configure path to client's keystore and truststore in this project's *wildfly-config.xml* accordingly
 

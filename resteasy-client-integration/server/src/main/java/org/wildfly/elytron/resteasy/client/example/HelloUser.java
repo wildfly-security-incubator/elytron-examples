@@ -15,10 +15,10 @@
  */
 package org.wildfly.elytron.resteasy.client.example;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.SecurityContext;
 
 /**
  * Simple REST endpoint that will be used to demonstrate RESTEasy client integration with Elytron client.

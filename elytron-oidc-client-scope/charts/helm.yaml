@@ -1,0 +1,10 @@
+build:
+  uri: https://github.com/wildfly-security-incubator/elytron-examples.git
+  contextDir: elytron-oidc-client-scope
+deploy:
+  replicas: 1
+  env:
+    - name: OIDC_PROVIDER_URL
+      value: <KEYCLOAK_URL>
+    - name: SERVER_ARGS
+      value: "--stability=preview"

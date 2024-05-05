@@ -1,0 +1,52 @@
+# Configure sockets listening on ports 9443 and 10443
+/socket-binding-group=standard-sockets/socket-binding=first-socket-binding:add(port=9443)
+/socket-binding-group=standard-sockets/socket-binding=second-socket-binding:add(port=10443)
+
+# Configure server SSL context that will be used with port 9443
+/subsystem=elytron/key-store=twoWayKS1:add(path=server1.keystore,relative-to=jboss.server.config.dir,credential-reference={clear-text=secret},type=PKCS12)
+/subsystem=elytron/key-store=twoWayTS1:add(path=server1.truststore,relative-to=jboss.server.config.dir,credential-reference={clear-text=secret},type=PKCS12)
+/subsystem=elytron/key-manager=twoWayKM1:add(key-store=twoWayKS1,credential-reference={clear-text=secret})
+/subsystem=elytron/trust-manager=twoWayTM1:add(key-store=twoWayTS1)
+/subsystem=elytron/server-ssl-context=twoWaySSC1:add(key-manager=twoWayKM1,protocols=["TLSv1.2"],trust-manager=twoWayTM1,need-client-auth=true)
+
+# Configure SSL context that will be used with port 10443
+/subsystem=elytron/key-store=twoWayKS2:add(path=server2.keystore,relative-to=jboss.server.config.dir,credential-reference={clear-text=secret},type=PKCS12)
+/subsystem=elytron/key-store=twoWayTS2:add(path=server2.truststore,relative-to=jboss.server.config.dir,credential-reference={clear-text=secret},type=PKCS12)
+/subsystem=elytron/key-manager=twoWayKM2:add(key-store=twoWayKS2,credential-reference={clear-text=secret})
+/subsystem=elytron/trust-manager=twoWayTM2:add(key-store=twoWayTS2)
+/subsystem=elytron/server-ssl-context=twoWaySSC2:add(key-manager=twoWayKM2,protocols=["TLSv1.2"],trust-manager=twoWayTM2,need-client-auth=true)
+
+# Configure undertow HTTPS listeners to have above SSL contexts on the socket bindings
+/subsystem=undertow/server=default-server/https-listener=first-listener:add(socket-binding=first-socket-binding,ssl-context=twoWaySSC1,enable-http2=true)
+/subsystem=undertow/server=default-server/https-listener=second-listener:add(socket-binding=second-socket-binding,ssl-context=twoWaySSC2,enable-http2=true)
+
+# Configure client SSL contexts that will be sending outgoing requests from port 8080 to the port 9443 and 10443
+/subsystem=elytron/key-store=clientKS1:add(path=client1.keystore,relative-to=jboss.server.config.dir,credential-reference={clear-text=secret},type=PKCS12)
+/subsystem=elytron/key-store=clientTS1:add(path=client1.truststore,relative-to=jboss.server.config.dir,credential-reference={clear-text=secret},type=PKCS12)
+/subsystem=elytron/key-store=clientKS2:add(path=client2.keystore,relative-to=jboss.server.config.dir,credential-reference={clear-text=secret},type=PKCS12)
+/subsystem=elytron/key-store=clientTS2:add(path=client2.truststore,relative-to=jboss.server.config.dir,credential-reference={clear-text=secret},type=PKCS12)
+/subsystem=elytron/key-manager=clientKM1:add(key-store=clientKS1,credential-reference={clear-text=secret})
+/subsystem=elytron/trust-manager=clientTM1:add(key-store=clientTS1)
+/subsystem=elytron/trust-manager=clientTM2:add(key-store=clientTS2)
+/subsystem=elytron/key-manager=clientKM2:add(key-store=clientKS2,credential-reference={clear-text=secret})
+
+/subsystem=elytron/client-ssl-context=client1-ssl-context:add(key-manager=clientKM1,protocols=["TLSv1.2"],trust-manager=clientTM1)
+/subsystem=elytron/client-ssl-context=client2-ssl-context:add(key-manager=clientKM2,protocols=["TLSv1.2"],trust-manager=clientTM2)
+
+# Configure client authentication context that will be used with the dynamic SSL context
+/subsystem=elytron/authentication-context=ac:add(match-rules=[{match-port=9443,ssl-context=client1-ssl-context},{match-port=10443,ssl-context=client2-ssl-context}])
+
+# Configure a dynamic SSL context that uses the above authentication context and delegates to the appropriate SSL context based on the port of the outbound connection.
+/subsystem=elytron/dynamic-client-ssl-context=dynamicClientSSLContext:add(authentication-context=ac)
+
+# Configure reverse proxy for 9443 port
+/socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=my-socket:add(host=localhost,port=9443)
+/subsystem=undertow/configuration=handler/reverse-proxy=my-proxy:add()
+/subsystem=undertow/configuration=handler/reverse-proxy=my-proxy/host=localhost:add(outbound-socket-binding=my-socket,ssl-context=dynamicClientSSLContext,scheme=https)
+/subsystem=undertow/server=default-server/host=default-host/location=\/proxy:add(handler=my-proxy)
+
+# Configure reverse proxy for 10443 port
+/socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=my-socket2:add(host=localhost,port=10443)
+/subsystem=undertow/configuration=handler/reverse-proxy=my-proxy2:add()
+/subsystem=undertow/configuration=handler/reverse-proxy=my-proxy2/host=localhost:add(outbound-socket-binding=my-socket2,ssl-context=dynamicClientSSLContext,scheme=https)
+/subsystem=undertow/server=default-server/host=default-host/location=\/proxy2:add(handler=my-proxy2)

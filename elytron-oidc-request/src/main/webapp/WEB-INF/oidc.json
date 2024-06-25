@@ -1,0 +1,12 @@
+{
+    "client-id" : "myclient",
+    "provider-url" : "${env.OIDC_PROVIDER_URL:http://localhost:8080}/realms/myrealm",
+    "public-client" : "false",
+    "authentication-request-format" : "request_uri",
+    "request-object-signing-algorithm" : "HS256",
+    "ssl-required" : "EXTERNAL",
+    "credentials" : {
+        "secret" : "<INSERT_CLIENT_SECRET>"
+    }
+}
+

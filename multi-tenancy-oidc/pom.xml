@@ -9,10 +9,10 @@
     <url>http://maven.apache.org</url>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <version.wildfly.maven.plugin>4.2.0.Final</version.wildfly.maven.plugin>
-        <version.server.bom>30.0.0.Final</version.server.bom>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <version.wildfly.maven.plugin>6.0.0.Final</version.wildfly.maven.plugin>
+        <version.server.bom>41.0.0.Final</version.server.bom>
     </properties>
 
     <dependencyManagement>

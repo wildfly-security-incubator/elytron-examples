@@ -1,0 +1,13 @@
+{
+    "client-id" : "myclient",
+    "provider-url" : "${env.OIDC_PROVIDER_URL:http://localhost:8180}/realms/myrealm",
+    "public-client" : "false",
+    "principal-attribute" : "preferred_username",
+    "ssl-required" : "EXTERNAL",
+    "logout-path" : "/mylogout",
+    "credentials" : { "secret" : "${env.OIDC_CLIENT_SECRET:REPLACE_WITH_KEYCLOAK_CLIENT_SECRET}" },
+    "logout-callback-path" : "http://localhost:8090/simple-webapp-oidc/more/myCallback",
+    "post-logout-redirect-uri" : "http://localhost:8090/simple-webapp-oidc/logged-out",
+    "logout-session-required" : true,
+    "back-channel-logout-session-invalidation-limit" : 25
+}

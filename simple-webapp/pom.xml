@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.wildfly.security.examples</groupId>
@@ -9,51 +10,105 @@
     <url>http://maven.apache.org</url>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <wildfly.home>${project.build.directory}/wildfly</wildfly.home>
 
-        <version.junit>4.13.2</version.junit>
-        <version.wildfly.maven.plugin>2.0.0.Final</version.wildfly.maven.plugin>
-        <version.server.bom>27.0.1.Final</version.server.bom>
+        <version.wildfly.maven.plugin>5.0.1.Final</version.wildfly.maven.plugin>
+        <version.wildfly>36.0.0.Final</version.wildfly>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.wildfly.bom</groupId>
-                <artifactId>wildfly-ee-with-tools</artifactId>
-                <version>${version.server.bom}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
+    <dependency>
+        <groupId>org.wildfly.bom</groupId>
+        <artifactId>wildfly-ee-with-tools</artifactId>
+        <version>${version.wildfly}</version>
+        <type>pom</type>
+        <scope>import</scope>
+    </dependency>
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
         <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <scope>provided</scope>
+    <groupId>jakarta.servlet</groupId>
+    <artifactId>jakarta.servlet-api</artifactId>
+    <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${version.junit}</version>
-            <scope>test</scope>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+    <scope>test</scope>
         </dependency>
     </dependencies>
 
     <build>
         <finalName>simple-webapp</finalName>
         <plugins>
-            <plugin>
-                <groupId>org.wildfly.plugins</groupId>
-                <artifactId>wildfly-maven-plugin</artifactId>
-                <version>${version.wildfly.maven.plugin}</version>
-            </plugin>
+    <plugin>
+        <groupId>org.wildfly.plugins</groupId>
+        <artifactId>wildfly-maven-plugin</artifactId>
+    </plugin>
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+    <id>provision</id>
+    <activation>
+        <property>
+            <name>provision</name>
+        </property>
+    </activation>
+    <build>
+        <plugins>
+            <plugin>
+        <groupId>org.wildfly.plugins</groupId>
+        <artifactId>wildfly-maven-plugin</artifactId>
+        <configuration>
+            <jboss-home>${wildfly.home}</jboss-home>
+            <provisioningDir>${wildfly.home}</provisioningDir>
+            <feature-packs>
+                <feature-pack>
+            <groupId>org.wildfly</groupId>
+            <artifactId>wildfly-galleon-pack</artifactId>
+            <version>${version.wildfly}</version>
+                </feature-pack>
+            </feature-packs>
+            <layers>
+                <layer>core-server</layer>
+                <layer>web-server</layer>
+            </layers>
+            <packaging-scripts>
+                <packaging-script>
+            <scripts>
+                <script>configuration.cli</script>
+            </scripts>
+                </packaging-script>
+            </packaging-scripts>
+            <galleon-options>
+                <jboss-maven-dist />
+                <jboss-fork-embedded>${galleon.fork.embedded}</jboss-fork-embedded>
+            </galleon-options>
+            <log-provisioning-time>${galleon.log.time}</log-provisioning-time>
+            <extra-server-content-dirs>
+                <extra-content>extra-content</extra-content>
+            </extra-server-content-dirs>
+        </configuration>
+        <executions>
+            <execution>
+                <phase>package</phase>
+                <goals>
+            <goal>package</goal>
+                </goals>
+            </execution>
+        </executions>
+            </plugin>
+        </plugins>
+    </build>
+        </profile>
+    </profiles>
 
 </project>

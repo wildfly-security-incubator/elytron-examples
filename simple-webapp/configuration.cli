@@ -1,0 +1,4 @@
+#/subsystem=logging/logger=io.undertow:add(level=TRACE)
+/subsystem=logging/logger=org.wildfly.security:add(level=DEBUG)
+/subsystem=undertow/application-security-domain=other:add(security-domain=ApplicationDomain)
+

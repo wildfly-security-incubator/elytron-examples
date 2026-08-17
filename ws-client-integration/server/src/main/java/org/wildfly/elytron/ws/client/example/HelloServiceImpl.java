@@ -3,7 +3,7 @@ package org.wildfly.elytron.ws.client.example;
 import org.wildfly.security.auth.server.SecurityDomain;
 
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 /**
  * The implementation of the HelloService JAX-WS Web Service.

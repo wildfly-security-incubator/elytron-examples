@@ -9,42 +9,64 @@
     <packaging>war</packaging>
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.release>11</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <version.wildfly-elytron>2.2.2.Final</version.wildfly-elytron>
+        <version.wildfly-ee-with-tools>29.0.1.Final</version.wildfly-ee-with-tools>
+        <version.jakarta.jws-api>3.0.0</version.jakarta.jws-api>
+        <version.maven-war-plugin>3.1.0</version.maven-war-plugin>
+        <version.wildfly-maven-plugin>4.2.0.Final</version.wildfly-maven-plugin>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.wildfly.bom</groupId>
+                <artifactId>wildfly-ee-with-tools</artifactId>
+                <version>${version.wildfly-ee-with-tools}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
             <groupId>org.wildfly.security</groupId>
             <artifactId>wildfly-elytron</artifactId>
-            <version>1.11.0.Final</version>
+	    <version>${version.wildfly-elytron}</version>
         </dependency>
         <dependency>
-            <groupId>javax.jws</groupId>
-            <artifactId>javax.jws-api</artifactId>
-            <version>1.1</version>
+            <groupId>jakarta.jws</groupId>
+            <artifactId>jakarta.jws-api</artifactId>
+	    <version>${version.jakarta.jws-api}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.spec.javax.servlet</groupId>
-            <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-            <version>1.0.2.Final</version>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
+
     <build>
         <finalName>ws-client-integration</finalName>
         <plugins>
-            <!-- WildFly plug-in to deploy the WAR. This allows to use mvn wildfly:deploy -->
+            <!-- WildFly plug-in to deploy the WAR. This allows us to use mvn wildfly:deploy -->
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
-                <version>2.0.0.Final</version>
+		<version>${version.wildfly-maven-plugin}</version>
             </plugin>
 
-            <!-- This ataches compiled classes so they can be used in client -->
+            <!-- This attaches compiled classes so they can be used in the client -->
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>3.2.3</version>
+		<version>${version.maven-war-plugin}</version>
                 <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
                     <attachClasses>true</attachClasses>
                 </configuration>
             </plugin>

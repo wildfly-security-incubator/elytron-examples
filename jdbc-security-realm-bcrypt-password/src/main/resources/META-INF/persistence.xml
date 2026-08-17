@@ -27,8 +27,9 @@
             you can find it in the source at src/main/webapp/WEB-INF/servlet-security-quickstart-ds.xml -->
         <jta-data-source>java:jboss/datasources/ServletSecurityDS</jta-data-source>
         <properties>
-            <!-- Properties for Hibernate -->
+            <!-- Schema management properties -->
             <property name="hibernate.hbm2ddl.auto" value="create-drop" />
+            <!-- Generated SQL logging properties -->
             <property name="hibernate.show_sql" value="false" />
         </properties>
     </persistence-unit>

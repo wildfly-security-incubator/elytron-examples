@@ -9,15 +9,30 @@
     <packaging>war</packaging>
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.release>11</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <version.wildfly-ee-with-tools>29.0.1.Final</version.wildfly-ee-with-tools>
+        <version.jakarta.ws.rs-api>3.1.0</version.jakarta.ws.rs-api>
+        <version.wildfly-maven-plugin>4.2.0.Final</version.wildfly-maven-plugin>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.wildfly.bom</groupId>
+                <artifactId>wildfly-ee-with-tools</artifactId>
+                <version>${version.wildfly-ee-with-tools}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
-            <groupId>org.jboss.spec.javax.ws.rs</groupId>
-            <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
-            <version>1.0.2.Final</version>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+	    <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -28,7 +43,7 @@
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
-                <version>2.0.0.Final</version>
+                <version>${version.wildfly-maven-plugin}</version>
             </plugin>
         </plugins>
     </build>

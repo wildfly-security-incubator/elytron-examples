@@ -17,7 +17,7 @@
         <dependency>
             <groupId>org.wildfly.security</groupId>
             <artifactId>wildfly-elytron</artifactId>
-            <version>1.11.0.Final</version>
+            <version>1.15.15.Final</version>
         </dependency>
         <dependency>
             <groupId>javax.jws</groupId>

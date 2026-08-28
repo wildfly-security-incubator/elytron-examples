@@ -18,7 +18,8 @@ batch
 /subsystem=ejb3/application-security-domain=BusinessDomain:add(security-domain=BusinessDomain)
 
 /subsystem=elytron/virtual-security-domain=virtual-security-domain-to-domain.ear:add(outflow-security-domains=[BusinessDomain])
-/subsystem=elytron/security-domain=BusinessDomain:write-attribute(name=trusted-virtual-security-domains, value=[virtual-security-domain-to-domain.ear])
+/subsystem=elytron/virtual-security-domain=ejb-basic.ear:add(outflow-security-domains=[BusinessDomain])
+/subsystem=elytron/security-domain=BusinessDomain:write-attribute(name=trusted-virtual-security-domains, value=[virtual-security-domain-to-domain.ear, ejb-basic.ear])
 
 # Run the batch commands
 run-batch

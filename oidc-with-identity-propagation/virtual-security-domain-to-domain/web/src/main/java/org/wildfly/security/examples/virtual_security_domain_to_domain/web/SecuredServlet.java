@@ -43,7 +43,7 @@ public class SecuredServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        EntryBean bean = lookup(EntryBean.class, "java:global/virtual-security-domain-to-domain/virtual-security-domain-to-domain-ejb/EntryBean");
+        EntryBean bean = lookup(EntryBean.class, "java:global/virtual-security-domain-to-domain/virtual-security-domain-to-domain-ejb/EntryBean!org.wildfly.security.examples.virtual_security_domain_to_domain.ejb.EntryBean");
         final PrintWriter writer = resp.getWriter();
 
         writer.println("<html><head><title>virtual-security-domain-to-domain</title></head><body>");

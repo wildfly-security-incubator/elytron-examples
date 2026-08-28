@@ -25,6 +25,7 @@
         <version>2.0.0.Alpha1-SNAPSHOT</version>
     </parent>
     <artifactId>ejb-basic-ejb</artifactId>
+    <packaging>ejb</packaging>
 
     <dependencies>
         <dependency>
@@ -53,8 +54,18 @@
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
+                <version>5.1.1.Final</version>
                 <configuration>
                     <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ejb-plugin</artifactId>
+                <version>3.2.1</version>
+                <configuration>
+                    <ejbVersion>3.1</ejbVersion>
+                    <generateClient>true</generateClient>
                 </configuration>
             </plugin>
         </plugins>

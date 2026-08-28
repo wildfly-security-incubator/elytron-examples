@@ -53,7 +53,7 @@ public class EntryBean {
 
     @PermitAll
     public String invokeManagementBean() {
-        Management management = lookup(Management.class, "java:global/virtual-security-domain-to-domain/ejb-basic-ejb/ManagementBean!org.wildfly.security.examples.ejb_basic.ejb.Management");
+        Management management = lookup(Management.class, "java:global/ejb-basic/ejb-basic-ejb/ManagementBean!org.wildfly.security.examples.ejb_basic.ejb.Management");
         return management.adminOnlyMethod();
     }
 

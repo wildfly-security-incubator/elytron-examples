@@ -1,0 +1,85 @@
+# Batch script to restore the WildFly configuration that was modified to run the quickstart
+
+# Start batching commands
+batch
+
+
+## tls and Connector Configuration ##
+# Restore the remote connector for the ejb3 subsystem
+/subsystem=ejb3/service=remote:write-attribute(name=connectors,value=[http-remoting-connector])
+
+# Remove the remote HTTP connector
+/subsystem=remoting/http-connector=tlsConnector:remove()
+
+# Remove the SASL authentication factory
+/subsystem=elytron/sasl-authentication-factory=tlsSASLFactory:remove()
+
+# Restore the original the SSL/TLS context
+/subsystem=undertow/server=default-server/https-listener=https:write-attribute(name=ssl-context,value=applicationSSC)
+
+# Remove the server SSL/TLS context
+/subsystem=elytron/server-ssl-context=tlsSSC:remove()
+
+
+## Server KeyStore and TrustStore ##
+# Remove the trust manager
+/subsystem=elytron/trust-manager=tlsTM:remove()
+
+# Remove the client certificate from the trust store
+/subsystem=elytron/key-store=tlsTrustStore:remove-alias(alias=client)
+
+# Store the updated trust store state to the trust store file
+/subsystem=elytron/key-store=tlsTrustStore:store()
+
+# Run batched commands
+run-batch
+
+# Start batching commands again
+batch
+
+# Remove the trust store from the server
+/subsystem=elytron/key-store=tlsTrustStore:remove()
+
+# Remove the key manager
+/subsystem=elytron/key-manager=tlsKM:remove()
+
+# Remove the server key pair from the key store
+/subsystem=elytron/key-store=tlsKeyStore:remove-alias(alias=localhost)
+
+# Store the updated trust store state to the key store file
+/subsystem=elytron/key-store=tlsKeyStore:store()
+
+# Run batched commands
+run-batch
+
+# Start batching commands again
+batch
+
+# Remove the key store for the server
+/subsystem=elytron/key-store=tlsKeyStore:remove()
+
+
+## Filesystem Realm and Security Domain ##
+# Remove the security domain mapping from the ejb3 subsystem
+/subsystem=ejb3/application-security-domain=tlsApp:remove()
+
+# Remove the security domain from the filesystem realm
+/subsystem=elytron/security-domain=tlsFsSD:remove()
+
+# Remove the example identity
+/subsystem=elytron/filesystem-realm=tlsFsRealm:remove-identity(identity=example_user)
+
+# Run batched commands
+run-batch
+
+# Start batching commands again
+batch
+
+# Remove the filesystem realm
+/subsystem=elytron/filesystem-realm=tlsFsRealm:remove()
+
+# Run batched commands
+run-batch
+
+# Reload the server configuration
+reload
